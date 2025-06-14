@@ -1,0 +1,96 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Bookings {
+  id          Int      @id @default(autoincrement())
+  user_id     String   @db.Uuid
+  vehicle_id  Int
+  start_date  DateTime @db.Date
+  end_date    DateTime @db.Date
+  total_days  Int
+  total_cost  Decimal
+  status      String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  // relations (optional, if you want)
+  user    Users    @relation(fields: [user_id], references: [id])
+  vehicle Vehicles @relation(fields: [vehicle_id], references: [id])
+  reviews Reviews[]
+
+  @@map("bookings")
+}
+
+model Locations {
+  id         Int      @id @default(autoincrement())
+  name       String
+  address    String
+  city       String
+  created_at DateTime @default(now())
+
+  vehicles Vehicles[]
+
+  @@map("locations")
+}
+
+model Reviews {
+  id         Int      @id @default(autoincrement())
+  user_id    String   @db.Uuid
+  vehicle_id Int
+  booking_id Int
+  rating     Int
+  comment    String
+  created_at DateTime @default(now())
+
+  user    Users    @relation(fields: [user_id], references: [id])
+  vehicle Vehicles @relation(fields: [vehicle_id], references: [id])
+  booking Bookings @relation(fields: [booking_id], references: [id])
+
+  @@map("reviews")
+}
+
+model Users {
+  id           String    @id @default(uuid()) @db.Uuid
+  email        String    @unique
+  full_name    String
+  phone        String
+  role         String
+  password_hash String
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+
+  bookings Bookings[]
+  reviews  Reviews[]
+
+  @@map("users")
+}
+
+model Vehicles {
+  id            Int      @id @default(autoincrement())
+  name          String
+  brand         String
+  model         String
+  type          String
+  fuel_type     String
+  price_per_day Decimal
+  image_url     String
+  description   String
+  location_id   Int
+  status        String
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  location Locations @relation(fields: [location_id], references: [id])
+  bookings Bookings[]
+  reviews  Reviews[]
+
+  @@map("vehicles")
+}
