@@ -145,6 +145,16 @@ export function AdminVehicles({ vehicles, setVehicles }: AdminVehiclesProps) {
 
   const handleEditVehicle = async () => {
     if (!selectedVehicle) return
+
+    if (!formData.location_id || formData.location_id === "" || isNaN(Number(formData.location_id))) {
+      toast({
+        title: "Error",
+        description: "Please select a valid location",
+        variant: "destructive",
+      })
+      return
+    }
+
     setIsLoading(true)
 
     try {

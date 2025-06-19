@@ -170,12 +170,17 @@ export function AdminBookings({ bookings = [], refreshBookings }: AdminBookingsP
                   <TableCell>{formatCurrency(booking.total_cost)}</TableCell>
                   <TableCell>
                     <Badge
-                      className={`
-                        ${booking.status === "pending" ? "bg-yellow-500" : ""}
-                        ${booking.status === "confirmed" ? "bg-green-500" : ""}
-                        ${booking.status === "completed" ? "bg-blue-500" : ""}
-                        ${booking.status === "cancelled" ? "bg-gray-500" : ""}
-                      `}
+                      variant={
+                        booking.status === "pending"
+                          ? "outline"
+                          : booking.status === "confirmed"
+                          ? "secondary"
+                          : booking.status === "completed"
+                          ? "default"
+                          : booking.status === "cancelled"
+                          ? "destructive"
+                          : "default"
+                      }
                     >
                       {booking.status}
                     </Badge>

@@ -46,18 +46,20 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt"
   },
   callbacks: {
-    async jwt({ token, user }: { token: JWT; user?: User }) {
-      if (user) {
-        token.id = user.id
+      async jwt({ token, user }: { token: JWT; user?: User }) {
+        if (user) {
+          token.id = (user as any).id
+          token.role = (user as any).role
+        }
+        return token
+      },
+      async session({ session, token }: { session: Session; token: JWT }) {
+        if (token) {
+          (session.user as any).id = (token as any).id
+          (session.user as any).role = (token as any).role
+        }
+        return session
       }
-      return token
-    },
-    async session({ session, token }: { session: Session; token: JWT }) {
-      if (token) {
-        (session.user as any).id = token.id
-      }
-      return session
-    }
   },
   pages: {
     signIn: "/login"
