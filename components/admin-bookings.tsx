@@ -143,7 +143,7 @@ export function AdminBookings({ bookings = [], refreshBookings }: AdminBookingsP
                   <TableCell>
                     <div className="flex items-center space-x-2">
                       <User className="h-4 w-4 text-gray-500" />
-                      <span>{booking.user?.name || "Unknown User"}</span>
+                      <span>{booking.user?.full_name || "Unknown User"}</span>
                     </div>
                   </TableCell>
                   <TableCell>

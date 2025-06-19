@@ -104,8 +104,8 @@ export function Navbar() {
                 <div className="flex items-center justify-start gap-2 p-2">
                   <div className="flex flex-col space-y-1 leading-none">
                     <p className="font-medium">{user?.full_name}</p>
-                    <p className="w-[200px] truncate text-sm text-muted-foreground">{user.email}</p>
-                    <p className="w-[200px] truncate text-sm text-muted-foreground">{user.phone || "No phone"}</p>
+                    <p className="w-[200px] truncate text-sm text-muted-foreground">{user?.email}</p>
+                    <p className="w-[200px] truncate text-sm text-muted-foreground">{user?.phone}</p>
                   </div>
                 </div>
                 <DropdownMenuSeparator />
@@ -117,9 +117,7 @@ export function Navbar() {
                     <DropdownMenuItem asChild>
                       <Link href="/profile">Profile</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/bookings">My Bookings</Link>
-                    </DropdownMenuItem>
+                   
                   </>
                 )}
                 {isAdmin && (

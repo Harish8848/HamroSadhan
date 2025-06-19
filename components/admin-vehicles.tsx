@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -36,6 +36,9 @@ export function AdminVehicles({ vehicles, setVehicles }: AdminVehiclesProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null)
 
+
+  const [locations, setLocations] = useState([])
+
   const [formData, setFormData] = useState({
     type: "car",
     brand: "",
@@ -44,7 +47,32 @@ export function AdminVehicles({ vehicles, setVehicles }: AdminVehiclesProps) {
     fuel_type: "petrol",
     status: "available",
     image_url: "",
+    location_id: "",
+    description: "",
   })
+
+  useEffect(() => {
+    async function fetchLocations() {
+      try {
+      const response = await fetch("/api/locations")
+        if (!response.ok) {
+          throw new Error("Failed to fetch locations")
+        }
+        const data = await response.json()
+        setLocations(data)
+        if (data.length > 0) {
+          setFormData((prev) => ({ ...prev, location_id: data[0].id.toString() }))
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load locations",
+          variant: "destructive",
+        })
+      }
+    }
+    fetchLocations()
+  }, [])
 
   const { toast } = useToast()
 
@@ -57,6 +85,8 @@ export function AdminVehicles({ vehicles, setVehicles }: AdminVehiclesProps) {
       fuel_type: "petrol",
       status: "available",
       image_url: "",
+      location_id: "",
+      description: "",
     })
   }
 
@@ -92,11 +122,14 @@ export function AdminVehicles({ vehicles, setVehicles }: AdminVehiclesProps) {
         throw new Error(errorData.error || "Failed to add vehicle")
       }
 
+      const newVehicle = await response.json()
+
       toast({
         title: "Vehicle added",
         description: "The vehicle has been added successfully",
       })
 
+      setVehicles((prev) => [...prev, newVehicle])
       setIsAddDialogOpen(false)
       resetForm()
     } catch (error: any) {
@@ -115,6 +148,7 @@ export function AdminVehicles({ vehicles, setVehicles }: AdminVehiclesProps) {
     setIsLoading(true)
 
     try {
+      console.log("Updating vehicle with formData:", formData)
       const response = await fetch("/api/vehicles/update", {
         method: "POST",
         headers: {
@@ -128,11 +162,16 @@ export function AdminVehicles({ vehicles, setVehicles }: AdminVehiclesProps) {
         throw new Error(errorData.error || "Failed to update vehicle")
       }
 
+      const updatedVehicle = await response.json()
+
       toast({
         title: "Vehicle updated",
         description: "The vehicle has been updated successfully",
       })
 
+      setVehicles((prev) =>
+        prev.map((v) => (v.id === updatedVehicle.id ? updatedVehicle : v))
+      )
       setIsEditDialogOpen(false)
       setSelectedVehicle(null)
     } catch (error: any) {
@@ -186,14 +225,18 @@ export function AdminVehicles({ vehicles, setVehicles }: AdminVehiclesProps) {
   const openEditDialog = (vehicle: Vehicle) => {
     setSelectedVehicle(vehicle)
     setFormData({
-      type: vehicle.type,
-      brand: vehicle.brand,
-      model: vehicle.model,
-      price_per_day: vehicle.price_per_day,
-      fuel_type: vehicle.fuel_type,
-      status: vehicle.status,
-      image_url: vehicle.image_url || "",
-    })
+          type: vehicle.type,
+          brand: vehicle.brand,
+          model: vehicle.model,
+          price_per_day: vehicle.price_per_day,
+          fuel_type: vehicle.fuel_type,
+          status: vehicle.status,
+          image_url: vehicle.image_url || "",
+          location_id: (vehicle.location && "id" in vehicle.location && vehicle.location.id)
+            ? vehicle.location.id.toString()
+            : "",
+          description: vehicle.description || "",
+        })
     setIsEditDialogOpen(true)
   }
 
@@ -279,6 +322,28 @@ export function AdminVehicles({ vehicles, setVehicles }: AdminVehiclesProps) {
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="location_id">Location</Label>
+                <Select
+                  value={formData.location_id}
+                  onValueChange={(value) => handleSelectChange("location_id", value)}
+                >
+                  <SelectTrigger id="location_id">
+                    <SelectValue placeholder="Select location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {locations.map((location: any) => (
+                      <SelectItem key={location.id} value={location.id.toString()}>
+                        {location.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">Description (Optional)</Label>
+                <Input id="description" name="description" value={formData.description} onChange={handleInputChange} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="image_url">Image URL (Optional)</Label>

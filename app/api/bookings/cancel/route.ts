@@ -26,7 +26,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const userId = (session.user as { id: string }).id
+  const userId = (session.user as { id: string, role: string }).id
+  const userRole = (session.user as { id: string, role: string }).role
 
   try {
     const { bookingId } = await request.json()
@@ -35,12 +36,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing bookingId" }, { status: 400 })
     }
 
-    // Verify booking belongs to user
+    // Verify booking belongs to user or user is admin
     const booking = await prisma.bookings.findUnique({
       where: { id: bookingId },
     })
 
-    if (!booking || booking.user_id !== userId) {
+    if (!booking || (booking.user_id !== userId && userRole !== "admin")) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
