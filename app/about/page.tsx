@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Car, Bike, Shield, Clock, Users, CheckCircle } from "lucide-react"
 import Image from "next/image"
+import { Footer } from "@/components/footer"
 
 
 
@@ -206,6 +207,7 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+    <Footer />
     </div>
   )
 }

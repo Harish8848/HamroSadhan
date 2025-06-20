@@ -5,6 +5,7 @@ import { VehicleFilters } from "@/components/vehicle-filters"
 import { VehicleList } from "@/components/vehicle-list"
 import type { Vehicle, VehicleFilter } from "@/types"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
+import { Footer } from "@/components/footer"
 
 type Location = {
   id: string
@@ -118,6 +119,7 @@ export default function VehiclesPage() {
           <VehicleList vehicles={vehicles} />
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

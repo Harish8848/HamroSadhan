@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { MapPin, Car, Bike, Search, AlertCircle, Navigation, Phone, Clock, Users } from "lucide-react"
+import { Footer } from "@/components/footer"
 
 type Vehicle = {
   id: string
@@ -315,6 +316,7 @@ export default function LocationsPage() {
           </CardContent>
         </Card>
       </div>
+    <Footer />
     </div>
   )
 }
