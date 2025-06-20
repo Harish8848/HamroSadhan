@@ -12,7 +12,7 @@ import { MapPin, Car, Bike, Search, AlertCircle, Navigation, Phone, Clock, Users
 type Vehicle = {
   id: string
   name: string
-  type?: "car" | "bike"
+  type?: "car" | "bike" | "scooter" | "jeep"
   available?: boolean
   // Add other vehicle fields as needed
 }
@@ -69,8 +69,8 @@ export default function LocationsPage() {
   }
 
   const getVehicleStats = (vehicles: Vehicle[]) => {
-    const cars = vehicles.filter((v) => v.type === "car").length
-    const bikes = vehicles.filter((v) => v.type === "bike").length
+    const cars = vehicles.filter((v) => v.type === "car" || v.type === "jeep").length
+    const bikes = vehicles.filter((v) => v.type === "bike" || v.type === "scooter").length
     const available = vehicles.filter((v) => v.available !== false).length
     return { cars, bikes, available, total: vehicles.length }
   }
@@ -163,13 +163,13 @@ export default function LocationsPage() {
           </Card>
           <Card className="text-center p-4">
             <div className="text-2xl font-bold text-purple-600">
-              {locations.reduce((acc, loc) => acc + loc.vehicles.filter((v) => v.type === "car").length, 0)}
+              {locations.reduce((acc, loc) => acc + loc.vehicles.filter((v) => v.type === "car" || v.type === "jeep").length, 0)}
             </div>
             <div className="text-sm text-gray-600">Cars Available</div>
           </Card>
           <Card className="text-center p-4">
             <div className="text-2xl font-bold text-orange-600">
-              {locations.reduce((acc, loc) => acc + loc.vehicles.filter((v) => v.type === "bike").length, 0)}
+              {locations.reduce((acc, loc) => acc + loc.vehicles.filter((v) => v.type === "bike" || v.type === "scooter").length, 0)}
             </div>
             <div className="text-sm text-gray-600">Bikes Available</div>
           </Card>

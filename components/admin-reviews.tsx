@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -20,18 +20,14 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 
-
-
 const renderStars = (rating: number) => {
   return Array.from({ length: 5 }, (_, i) => (
     <Star key={i} className={`w-4 h-4 ${i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
   ))
 }
 
-import { useState, useEffect } from "react"
-
 export default function AdminReviews() {
-  const [reviews, setReviews] = useState([])
+  const [reviews, setReviews] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [ratingFilter, setRatingFilter] = useState("all")
   const [selectedReview, setSelectedReview] = useState<any>(null)
@@ -198,7 +194,7 @@ export default function AdminReviews() {
                       <AvatarFallback>
                         {review.user.name
                           .split(" ")
-                          .map((n) => n[0])
+                          .map((n: string) => n[0])
                           .join("")}
                       </AvatarFallback>
                     </Avatar>

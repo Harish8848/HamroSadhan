@@ -54,6 +54,7 @@ model Reviews {
   vehicle Vehicles @relation(fields: [vehicle_id], references: [id])
   booking Bookings @relation(fields: [booking_id], references: [id])
 
+  @@unique([user_id, vehicle_id])
   @@map("reviews")
 }
 

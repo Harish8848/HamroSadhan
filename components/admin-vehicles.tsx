@@ -279,10 +279,12 @@ export function AdminVehicles({ vehicles, setVehicles }: AdminVehiclesProps) {
                     <SelectTrigger id="type">
                       <SelectValue placeholder="Select type" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="car">Car</SelectItem>
-                      <SelectItem value="bike">Bike</SelectItem>
-                    </SelectContent>
+                  <SelectContent>
+                    <SelectItem value="car">Car</SelectItem>
+                    <SelectItem value="bike">Bike</SelectItem>
+                    <SelectItem value="scooter">Scooter</SelectItem>
+                    <SelectItem value="jeep">Jeep</SelectItem>
+                  </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
@@ -448,6 +450,8 @@ export function AdminVehicles({ vehicles, setVehicles }: AdminVehiclesProps) {
                   <SelectContent>
                     <SelectItem value="car">Car</SelectItem>
                     <SelectItem value="bike">Bike</SelectItem>
+                    <SelectItem value="scooter">Scooter</SelectItem>
+                    <SelectItem value="jeep">Jeep</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

@@ -24,6 +24,21 @@ export async function POST(request: Request) {
       )
     }
 
+    // Check if user already has a review for this vehicle
+    const existingReview = await prisma.reviews.findFirst({
+      where: {
+        user_id: userId,
+        vehicle_id: vehicleIdInt,
+      },
+    })
+
+    if (existingReview) {
+      return NextResponse.json(
+        { error: "User has already reviewed this vehicle" },
+        { status: 400 }
+      )
+    }
+
     const newReview = await prisma.reviews.create({
       data: {
         user_id: userId,

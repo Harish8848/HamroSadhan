@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { AdminVehicles } from "@/components/admin-vehicles"
 import { AdminBookings } from "@/components/admin-bookings"
 import { AdminUsers } from "@/components/admin-users"
+import AdminReviews from "@/components/admin-reviews"
 import type { Vehicle, Booking, User } from "@/types"
 import { UserProfile } from "@/components/user-profile"
 import { Loader2, Users, Car, CalendarCheck } from "lucide-react"
@@ -131,6 +132,7 @@ export default function AdminPage() {
           <TabsTrigger value="vehicles">Vehicles</TabsTrigger>
           <TabsTrigger value="bookings">Bookings</TabsTrigger>
           <TabsTrigger value="users">Users</TabsTrigger>
+          <TabsTrigger value="reviews">Reviews</TabsTrigger>
         </TabsList>
 
         <TabsContent value="vehicles">
@@ -155,6 +157,10 @@ export default function AdminPage() {
 
         <TabsContent value="users">
           <AdminUsers users={users} />
+        </TabsContent>
+
+        <TabsContent value="reviews">
+          <AdminReviews />
         </TabsContent>
       </Tabs>
     </div>
