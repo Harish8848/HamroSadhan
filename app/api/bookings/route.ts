@@ -8,9 +8,18 @@ export async function GET(request: Request) {
     const userId = url.searchParams.get("userId")
 
     // If no userId, fetch all bookings (admin)
+    const now = new Date()
     const bookings = userId
       ? await prisma.bookings.findMany({
-          where: { user_id: userId },
+          where: {
+            user_id: userId,
+            NOT: {
+              AND: [
+                { status: "confirmed" },
+                { end_date: { lt: now } },
+              ],
+            },
+          },
           orderBy: { created_at: "desc" },
           include: {
             vehicle: true,
@@ -18,6 +27,14 @@ export async function GET(request: Request) {
           },
         })
       : await prisma.bookings.findMany({
+          where: {
+            NOT: {
+              AND: [
+                { status: "confirmed" },
+                { end_date: { lt: now } },
+              ],
+            },
+          },
           orderBy: { created_at: "desc" },
           include: {
             vehicle: true,

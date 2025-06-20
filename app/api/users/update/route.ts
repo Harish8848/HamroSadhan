@@ -9,13 +9,18 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
+    const updateData: any = {
+      full_name: fullName,
+      updated_at: new Date(),
+    }
+
+    if (phone !== undefined && phone !== null) {
+      updateData.phone = phone
+    }
+
     const updatedUser = await prisma.users.update({
       where: { id: userId },
-      data: {
-        full_name: fullName,
-        phone: phone || null,
-        updated_at: new Date(),
-      },
+      data: updateData,
     })
 
     return NextResponse.json(updatedUser)

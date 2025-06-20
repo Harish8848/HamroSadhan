@@ -45,6 +45,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
+    // Prevent cancellation if booking is confirmed or completed
+    if (booking.status === "confirmed" || booking.status === "completed") {
+      return NextResponse.json(
+        { error: "Cannot cancel a booking that is confirmed or completed" },
+        { status: 400 }
+      )
+    }
+
     // Update booking status to cancelled
     const updatedBooking = await prisma.bookings.update({
       where: { id: bookingId },
