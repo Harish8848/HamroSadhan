@@ -25,19 +25,27 @@ export const authOptions: NextAuthOptions = {
             })
           });
 
+          console.log("Authorize response status:", res.status)
+          const data = await res.json();
+          console.log("Authorize response data:", data)
+
           if (!res.ok) {
-            return null;
+            // Throw an error with the message from the API response
+            throw new Error(data.error || "Login failed");
           }
 
-          const user = await res.json();
-          if (user) {
-            return user as User;
+          if (data) {
+            return data as User;
           }
 
           return null;
-        } catch (error) {
+        } catch (error: any) {
           console.error("Authorize error:", error);
-          return null;
+          // Map backend error message to NextAuth error code for login page
+          if (error.message === "Invalid email or password") {
+            throw new Error("CredentialsSignin");
+          }
+          throw new Error(error.message || "Login failed");
         }
       }
     })
@@ -47,22 +55,31 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
       async jwt({ token, user }: { token: JWT; user?: User }) {
+        console.log("NextAuth jwt callback token before:", token)
         if (user) {
           token.id = (user as any).id
           token.role = (user as any).role
+          token.fullName = (user as any).fullName || (user as any).name || null;
+          token.phone = (user as any).phone || null;
         }
+        console.log("NextAuth jwt callback token after:", token)
         return token
       },
       async session({ session, token }: { session: Session; token: JWT }) {
+        console.log("NextAuth session callback session before:", session)
         if (token) {
           (session.user as any).id = (token as any).id
           (session.user as any).role = (token as any).role
+          (session.user as any).fullName = (token as any).fullName || null;
+          (session.user as any).phone = (token as any).phone || null;
         }
+        console.log("NextAuth session callback session after:", session)
         return session
       }
   },
   pages: {
-    signIn: "/login"
+    signIn: "/login",
+    error: "/login" // Error code passed in query string as ?error=
   }
 }
 

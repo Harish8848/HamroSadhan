@@ -25,12 +25,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid email or password" }, { status: 401 })
     }
 
+    // Prevent login if user role is "pending"
+    if (user.role === "pending") {
+      return NextResponse.json({ error: "User role pending - login not allowed" }, { status: 403 })
+    }
+
     // Return user data for next-auth
     return NextResponse.json({
       id: user.id,
+      fullName: user.full_name,
       name: user.full_name,
       email: user.email,
       role: user.role,
+      phone: user.phone, // Added phone field here
     })
   } catch (error) {
     console.error("Login error:", error)

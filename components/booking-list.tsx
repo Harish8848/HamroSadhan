@@ -108,12 +108,13 @@ export function BookingList({ bookings }: BookingListProps) {
     setIsLoading(true)
 
     try {
-      const response = await fetch("/api/bookings/update-status", {
+      const response = await fetch("/api/bookings/cancel", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ bookingId: selectedBooking.id, status: "cancelled" }),
+        credentials: "include",
+        body: JSON.stringify({ bookingId: selectedBooking.id }),
       })
 
       if (!response.ok) {

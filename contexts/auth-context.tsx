@@ -2,11 +2,16 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react"
 import type { User } from "@/types"
+
+type ExtendedUser = User & {
+  fullName?: string
+  phone?: string | null
+}
 import { useRouter } from "next/navigation"
 import { signIn as nextAuthSignIn, signOut as nextAuthSignOut, getSession } from "next-auth/react"
 
 type AuthContextType = {
-  user: User | null
+  user: ExtendedUser | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<{ error: any }>
   signUp: (email: string, password: string, fullName: string, phone?: string) => Promise<{ error: any }>
@@ -17,19 +22,25 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<ExtendedUser | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
     // On app load, restore session using next-auth
     getSession().then((session) => {
+      console.log("AuthContext getSession session:", session)
       if (session && session.user) {
         // Normalize role string
         if (session.user.role && typeof session.user.role === "string") {
           session.user.role = session.user.role.trim().toLowerCase()
         }
-        setUser(session.user as User)
+        setUser({
+          ...session.user,
+          fullName: (session.user as any).fullName,
+          phone: (session.user as any).phone,
+        } as ExtendedUser)
+        console.log("AuthContext user set:", session.user)
       } else {
         setUser(null)
       }
@@ -45,8 +56,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         password,
       })
 
-      if (!result || result.error) {
-        return { error: result?.error || "Login failed" }
+      console.log("nextAuthSignIn result:", result)
+
+      if (!result || (result && result.error)) {
+        // Try to extract error message from different possible structures
+        let errorMessage = "Login failed"
+        if (result && typeof result.error === "string") {
+          if (result.error === "CredentialsSignin") {
+            errorMessage = "Invalid email or password"
+          } else {
+            errorMessage = result.error
+          }
+        } else if (result && result.error && typeof result.error === "object" && "message" in result.error) {
+          errorMessage = (result.error as any).message
+        }
+        return { error: errorMessage }
       }
 
       // Get session after signIn
@@ -56,7 +80,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (session.user.role && typeof session.user.role === "string") {
           session.user.role = session.user.role.trim().toLowerCase()
         }
-        setUser(session.user as User)
+        setUser({
+          ...session.user,
+          fullName: (session.user as any).fullName,
+          phone: (session.user as any).phone,
+        } as ExtendedUser)
 
         // Redirect based on role
         const role = session.user.role || ""
@@ -86,7 +114,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error: data.error || "Signup failed" }
       }
       localStorage.setItem("authToken", data.token)
-      setUser(data.user)
+        setUser({
+          ...data.user,
+          fullName: data.user.fullName,
+          phone: data.user.phone,
+        } as ExtendedUser)
 
       // Redirect based on role
       if (data.user && data.user.role) {

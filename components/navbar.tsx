@@ -19,6 +19,7 @@ import { ThemeToggle } from "./theme-toggle"
 
 export function Navbar() {
   const { user, signOut } = useAuth()
+  console.log("Navbar user:", user)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const pathname = usePathname()
 
@@ -103,7 +104,7 @@ export function Navbar() {
               <DropdownMenuContent align="end">
                 <div className="flex items-center justify-start gap-2 p-2">
                   <div className="flex flex-col space-y-1 leading-none">
-                    <p className="font-medium">{user?.full_name}</p>
+                    <p className="font-medium">{user?.fullName}</p>
                     <p className="w-[200px] truncate text-sm text-muted-foreground">{user?.email}</p>
                     <p className="w-[200px] truncate text-sm text-muted-foreground">{user?.phone}</p>
                   </div>

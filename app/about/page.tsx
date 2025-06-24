@@ -202,6 +202,7 @@ export default function AboutPage() {
               variant="outline"
               className=" bg-black text-lg px-8 py-3 text-white border-white hover:bg-white hover:text-blue-600"
             >
+              
               Contact Us
             </Button>
           </div>

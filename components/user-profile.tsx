@@ -9,11 +9,11 @@ import { useToast } from "@/components/ui/use-toast"
 import type { User } from "@/types"
 
 interface UserProfileProps {
-  user: User
+  user: User & { fullName?: string; phone?: string | null }
 }
 
 export function UserProfile({ user }: UserProfileProps) {
-  const [fullName, setFullName] = useState(user.full_name)
+  const [fullName, setFullName] = useState(user.fullName)
   const [phone, setPhone] = useState(user.phone || "")
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
@@ -69,8 +69,8 @@ export function UserProfile({ user }: UserProfileProps) {
             <p className="text-xs text-gray-500">Email cannot be changed</p>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="fullName">Full Name</Label>
-            <Input id="fullName" value={fullName ?? ""} onChange={(e) => setFullName(e.target.value)} required />
+            <Label htmlFor="full_name">Full Name</Label>
+            <Input id="full_name" value={fullName ?? ""} onChange={(e) => setFullName(e.target.value)} required />
           </div>
           <div className="space-y-2">
             <Label htmlFor="phone">Phone (Optional)</Label>

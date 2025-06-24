@@ -9,6 +9,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing userId" }, { status: 400 })
     }
 
+    // Find all booking IDs for the user
+    const userBookings = await prisma.bookings.findMany({
+      where: { user_id: userId },
+      select: { id: true },
+    })
+    const bookingIds = userBookings.map(booking => booking.id)
+
+    // Delete reviews related to those bookings
+    await prisma.reviews.deleteMany({
+      where: { booking_id: { in: bookingIds } },
+    })
+
+    // Delete all bookings related to the user
+    await prisma.bookings.deleteMany({
+      where: { user_id: userId },
+    })
+
     // Delete user from database
     await prisma.users.delete({
       where: { id: userId },

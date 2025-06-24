@@ -1,33 +1,17 @@
-import { NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
+import { NextResponse, NextRequest } from "next/server"
+import { getToken } from "next-auth/jwt"
 import { authOptions } from "../../auth/[...nextauth]"
 import prisma from "@/lib/prisma"
 
-export async function POST(request: Request) {
-  const cookie = request.headers.get("cookie") || ""
-  const url = new URL(request.url)
-  const req = {
-    headers: {
-      cookie,
-    },
-    url: url.toString(),
-  } as any
+export async function POST(request: NextRequest) {
+  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
 
-  const res = {
-    getHeader() {
-      return null
-    },
-    setHeader() {},
-  } as any
-
-  const session = await getServerSession(req, res, authOptions)
-
-  if (!session || !session.user) {
+  if (!token || !token.sub) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const userId = (session.user as { id: string, role: string }).id
-  const userRole = (session.user as { id: string, role: string }).role
+  const userId = token.sub
+  const userRole = (token as any).role
 
   try {
     const { bookingId } = await request.json()
@@ -36,9 +20,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing bookingId" }, { status: 400 })
     }
 
+    const bookingIdInt = parseInt(bookingId, 10)
+
     // Verify booking belongs to user or user is admin
     const booking = await prisma.bookings.findUnique({
-      where: { id: bookingId },
+      where: { id: bookingIdInt },
     })
 
     if (!booking || (booking.user_id !== userId && userRole !== "admin")) {
@@ -55,7 +41,7 @@ export async function POST(request: Request) {
 
     // Update booking status to cancelled
     const updatedBooking = await prisma.bookings.update({
-      where: { id: bookingId },
+      where: { id: bookingIdInt },
       data: { status: "cancelled" },
     })
 
