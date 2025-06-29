@@ -96,8 +96,8 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900 mb-1">Phone</h3>
-                      <p className="text-gray-600">+977 1-4567890</p>
-                      <p className="text-gray-600">+977 98XXXXXXXX</p>
+                      <p className="text-gray-600">+977 9868795658</p>
+                      <p className="text-gray-600">+977 9812709474</p>
                       <p className="text-sm text-gray-500 mt-1">Available 24/7 for emergencies</p>
                     </div>
                   </div>
@@ -120,8 +120,8 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900 mb-1">Office Address</h3>
-                      <p className="text-gray-600">Thamel, Kathmandu</p>
-                      <p className="text-gray-600">Nepal - 44600</p>
+                      <p className="text-gray-600">Mahendranagar, Kanchanpur</p>
+                      <p className="text-gray-600">Nepal - 10400</p>
                       <p className="text-sm text-gray-500 mt-1">Visit us for in-person assistance</p>
                     </div>
                   </div>
@@ -132,8 +132,8 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900 mb-1">Business Hours</h3>
-                      <p className="text-gray-600">Monday - Friday: 6:00 AM - 10:00 PM</p>
-                      <p className="text-gray-600">Saturday - Sunday: 7:00 AM - 9:00 PM</p>
+                      <p className="text-gray-600">Monday - Friday: 10:00 AM - 7:00 PM</p>
+                      <p className="text-gray-600">Saturday - Sunday: 10:00 AM - 5:00 PM</p>
                       <p className="text-sm text-gray-500 mt-1">Emergency support available 24/7</p>
                     </div>
                   </div>

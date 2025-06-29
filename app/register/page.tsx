@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
-import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Loader2 } from "lucide-react"
 
@@ -41,18 +40,19 @@ export default function RegisterPage() {
 
     setIsLoading(true)
 
-    try {
-      const { error } = await signUp(email, password, fullName, phone)
+      try {
+        const { error } = await signUp(email, password, fullName, phone)
 
-      if (error) throw error
+        if (error) throw error
 
-      toast({
-        title: "Registration successful",
-        description: "Welcome to HamroSadhan! You can now sign in.",
-      })
+        toast({
+          title: "Please verify the email to login",
+        })
 
-      router.push("/login")
-    } catch (error: any) {
+        setTimeout(() => {
+          router.push("/login")
+        }, 4000) // 4 seconds delay before redirect
+      } catch (error: any) {
       toast({
         title: "Registration failed",
         description: error.message || "An error occurred during registration",
@@ -65,7 +65,6 @@ export default function RegisterPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
 
       <main className="flex-1 flex items-center justify-center py-12">
         <Card className="w-full max-w-md">

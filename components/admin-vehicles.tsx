@@ -37,7 +37,7 @@ export function AdminVehicles({ vehicles, setVehicles }: AdminVehiclesProps) {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null)
 
 
-  const [locations, setLocations] = useState([])
+  const [locations, setLocations] = useState<{ id: number; name: string }[]>([])
 
   const [formData, setFormData] = useState({
     type: "car",
@@ -167,12 +167,17 @@ export function AdminVehicles({ vehicles, setVehicles }: AdminVehiclesProps) {
         body: JSON.stringify({ id: selectedVehicle.id, ...formData }),
       })
 
+      console.log("Update response status:", response.status)
+      const responseData = await response.json()
+      console.log("Update response data:", responseData)
+
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || "Failed to update vehicle")
+        throw new Error(responseData.error || "Failed to update vehicle")
       }
 
-      const updatedVehicle = await response.json()
+      const updatedVehicle = responseData
+      // Convert id to number to match frontend vehicles array id type
+      updatedVehicle.id = Number(updatedVehicle.id)
 
       toast({
         title: "Vehicle updated",
@@ -185,6 +190,7 @@ export function AdminVehicles({ vehicles, setVehicles }: AdminVehiclesProps) {
       setIsEditDialogOpen(false)
       setSelectedVehicle(null)
     } catch (error: any) {
+      console.error("Update vehicle error:", error)
       toast({
         title: "Error",
         description: error.message,
@@ -235,18 +241,21 @@ export function AdminVehicles({ vehicles, setVehicles }: AdminVehiclesProps) {
   const openEditDialog = (vehicle: Vehicle) => {
     setSelectedVehicle(vehicle)
     setFormData({
-          type: vehicle.type,
-          brand: vehicle.brand,
-          model: vehicle.model,
-          price_per_day: vehicle.price_per_day,
-          fuel_type: vehicle.fuel_type,
-          status: vehicle.status,
-          image_url: vehicle.image_url || "",
-          location_id: (vehicle.location && "id" in vehicle.location && vehicle.location.id)
-            ? vehicle.location.id.toString()
-            : "",
-          description: vehicle.description || "",
-        })
+      type: vehicle.type,
+      brand: vehicle.brand,
+      model: vehicle.model,
+      price_per_day: vehicle.price_per_day,
+      fuel_type: vehicle.fuel_type,
+      status: vehicle.status,
+      image_url: vehicle.image_url || "",
+      location_id:
+        vehicle.location && typeof vehicle.location === "object" && "id" in vehicle.location && vehicle.location.id
+          ? (vehicle.location.id as number).toString()
+          : locations.length > 0
+          ? locations[0].id.toString()
+          : "",
+      description: vehicle.description || "",
+    })
     setIsEditDialogOpen(true)
   }
 

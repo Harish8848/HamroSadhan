@@ -121,16 +121,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } as ExtendedUser)
 
       // Redirect based on role
-      if (data.user && data.user.role) {
-        const role = data.user.role.trim().toLowerCase()
-        if (role === "user") {
-          router.push("/dashboard")
-        } else if (role === "admin") {
-          router.push("/admin")
-        } else {
-          alert("Email not verified yet")
-        }
-      }
+      // Removed redirect logic to allow page to handle redirect after showing toast
+      // if (data.user && data.user.role) {
+      //   const role = data.user.role.trim().toLowerCase()
+      //   if (role === "user") {
+      //     router.push("/dashboard")
+      //   } else if (role === "admin") {
+      //     router.push("/admin")
+      //   } else {
+      //     alert("Email not verified yet")
+      //   }
+      // }
 
       return { error: null }
     } catch (error: any) {

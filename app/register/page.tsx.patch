@@ -1,0 +1,25 @@
+const { error } = await signUp(email, password, fullName, phone)
+
+        if (error) throw error
+
+        toast({
+          title: "Registration successful",
+          description: "Welcome to HamroSadhan! You can now sign in.",
+        })
+
+        router.push("/login")
+      } catch (error: any) {
+=======
+      try {
+        const { error } = await signUp(email, password, fullName, phone)
+
+        if (error) throw error
+
+        toast({
+          title: "Please verify the email to login",
+        })
+
+        setTimeout(() => {
+          router.push("/login")
+        }, 4000) // 4 seconds delay before redirect
+      } catch (error: any) {
