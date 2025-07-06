@@ -31,6 +31,11 @@ export async function GET(request: Request) {
     const userId = payload.userId
 
     try {
+      const userExists = await prisma.users.findUnique({ where: { id: userId } });
+      if (!userExists) {
+        console.error("Confirm Email: User not found for userId:", userId);
+        return new NextResponse(JSON.stringify({ error: "User not found" }), { status: 404, headers: { "Content-Type": "application/json" } });
+      }
       const updatedUser = await prisma.users.update({
         where: { id: userId },
         data: { role: "user" },

@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/components/ui/use-toast"
-import { Car } from "lucide-react"
+import { Car, Eye, EyeOff } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 
 export default function SignupPage() {
@@ -17,6 +17,8 @@ export default function SignupPage() {
   const [phone, setPhone] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [signupSuccess, setSignupSuccess] = useState(false)
   const router = useRouter()
@@ -96,34 +98,41 @@ export default function SignupPage() {
                   required
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone (Optional)</Label>
-                <Input
-                  id="phone"
-                  placeholder="+977 98XXXXXXXX"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
+              <div className="space-y-2 relative">
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-[38px] text-gray-500 hover:text-gray-700 focus:outline-none"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 relative">
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
                 <Input
                   id="confirmPassword"
-                  type="password"
+                  type={showConfirmPassword ? "text" : "password"}
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-[38px] text-gray-500 hover:text-gray-700 focus:outline-none"
+                  aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                >
+                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
@@ -140,15 +149,15 @@ export default function SignupPage() {
           </form>
         </Card>
       ) : (
-        <Card className="w-full max-w-md text-center p-8">
-          <CardTitle className="text-2xl font-bold mb-4">Account Created</CardTitle>
-          <CardDescription>
-            Please verify your email by clicking the link sent to your email address.
-          </CardDescription>
-          <Button className="mt-6" onClick={() => router.push("/login")}>
-            Go to Login
-          </Button>
-        </Card>
+      <Card className="w-full max-w-md text-center p-8">
+        <CardTitle className="text-2xl font-bold mb-4">Account Created</CardTitle>
+        <CardDescription>
+          Email sent to <strong>{email}</strong>. Please verify your email by clicking the link sent to your email address.
+        </CardDescription>
+        <Button className="mt-6" onClick={() => router.push("/login")}>
+          Go to Login
+        </Button>
+      </Card>
       )}
     </div>
   )

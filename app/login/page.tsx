@@ -1,6 +1,5 @@
 "use client"
 
-
 import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -9,12 +8,13 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
-import { Car } from "lucide-react"
+import { Car, Eye, EyeOff } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -34,8 +34,13 @@ export default function LoginPage() {
         errorMessage = "Please sign in to continue"
       }
       setErrorMessage(errorMessage)
+      toast({
+        title: "Login Error",
+        description: errorMessage,
+        variant: "destructive",
+      })
     }
-  }, [searchParams])
+  }, [searchParams, toast])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -46,12 +51,23 @@ export default function LoginPage() {
       const { error } = await signIn(email, password)
       if (error) {
         setErrorMessage(typeof error === "string" ? error : (error?.message || "Unknown error"))
+        toast({
+          title: "Login Error",
+          description: typeof error === "string" ? error : (error?.message || "Unknown error"),
+          variant: "destructive",
+        })
         setIsLoading(false)
         return
       }
       // signIn handles redirect based on role
     } catch (error: any) {
-      setErrorMessage(typeof error === "string" ? error : (error?.message || "Something went wrong"))
+      const message = typeof error === "string" ? error : (error?.message || "Something went wrong")
+      setErrorMessage(message)
+      toast({
+        title: "Login Error",
+        description: message,
+        variant: "destructive",
+      })
     } finally {
       setIsLoading(false)
     }
@@ -86,7 +102,7 @@ export default function LoginPage() {
                   required
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-2 relative">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">Password</Label>
                   <Link href="/forgot-password" className="text-sm text-red-600 hover:underline">
@@ -95,11 +111,19 @@ export default function LoginPage() {
                 </div>
                 <Input
                   id="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-[38px] text-gray-500 hover:text-gray-700 focus:outline-none"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">

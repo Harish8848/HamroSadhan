@@ -1,5 +1,6 @@
-import { notFound } from "next/navigation"
-// import { Navbar } from "@/components/navbar"
+import { notFound, redirect } from "next/navigation"
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "@/app/api/auth/[...nextauth].ts"
 import { Footer } from "@/components/footer"
 import { BookingForm } from "@/components/booking-form"
 import { VehicleDetails } from "@/components/vehicle-details"
@@ -29,6 +30,13 @@ async function getVehicle(id: string): Promise<Vehicle | null> {
 }
 
 export default async function VehicleDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const session = await getServerSession(authOptions)
+  console.log("VehicleDetailsPage session:", session)
+  // Temporarily disable redirect for debugging
+  // if (!session) {
+  //   redirect("/login")
+  // }
+
   const awaitedParams = await params
   const vehicle = await getVehicle(awaitedParams.id)
 

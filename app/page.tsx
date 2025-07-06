@@ -97,15 +97,6 @@ export default function Home() {
   }
 
 
-
-
-
-
-
-
-
-
-
   const searchParams = useSearchParams()
   const router = useRouter()
   const { toast } = useToast()
@@ -144,14 +135,6 @@ export default function Home() {
     }
   }, [searchParams, toast])
 
-  useEffect(() => {
-    
-      if (!user) {
-        router.push("/login")
-      }
-
-    
-  }, [loading, user, confirmed, router])
 
   if (loading || localLoading) {
     return <div className="container py-8 text-center">Loading...</div>
@@ -175,7 +158,7 @@ export default function Home() {
   <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
         {/* Background Video */}
         <div className="absolute inset-0 z-0">
-          <video autoPlay muted loop playsInline className="w-full h-full object-cover">
+          <video autoPlay muted loop playsInline className="w-full h-full object-cover brightness-150">
             <source src="/HamroSadhanBgVideo.mov" type="video/mp4" />
             {/* Fallback background */}
             <div className="w-full h-full bg-gradient-to-r from-blue-900 via-purple-900 to-blue-900"></div>
@@ -185,21 +168,21 @@ export default function Home() {
 
         {/* Hero Content */}
         <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight opacity-50">
             Your Journey,
             <span className="block bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               Our Wheels
             </span>
           </h1>
-          <p className="text-xl md:text-2xl mb-8 text-gray-200 max-w-2xl mx-auto">
+          <p className="text-xl md:text-2xl mb-8 text-gray-200 max-w-2xl mx-auto opacity-50">
             Rent cars and bikes instantly in Nepal. Safe, affordable, and convenient transportation at your fingertips.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Link href="/vehicles?type=car">
             <Button
               size="lg"
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-3">
-              <Car className="w-5 h-5 mr-2" />
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-3 opacity-50 hover:opacity-100 transition-all duration-300">
+              <Car className="w-5 h-5 mr-2 " />
               Rent a Car
             </Button>
             </Link>
@@ -208,7 +191,7 @@ export default function Home() {
             <Button
               size="lg"
               variant="outline"
-              className="border-white text-white hover:bg-white hover:text-gray-900 text-lg px-8 py-3 bg-transparent"
+              className="border-white text-white hover:bg-white hover:text-gray-900 text-lg px-8 py-3 bg-transparent opacity-50 hover:opacity-100 transition-all duration-300"
             >
               <Bike className="w-5 h-5 mr-2" />
               Rent a Bike
@@ -217,12 +200,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
-          <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-white rounded-full mt-2 animate-pulse"></div>
-          </div>
-        </div>
       </section>
 
         {/* Vehicle Slider Section */}

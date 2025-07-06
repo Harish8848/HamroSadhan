@@ -61,8 +61,35 @@ export async function POST(request: Request) {
 
     const existingUser = await prisma.users.findUnique({ where: { email } })
     if (existingUser) {
-      console.error("Email already registered:", email);
-      return new NextResponse(JSON.stringify({ error: "Email already registered" }), { status: 409, headers: { "Content-Type": "application/json" } })
+      if (existingUser.role === "pending") {
+        // Resend confirmation email
+        const token = jwt.sign({ userId: existingUser.id }, EMAIL_CONFIRMATION_SECRET, { expiresIn: "1d" })
+        const confirmationUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/confirm-email?token=${token}`
+        try {
+          const subject = "Verify your email to sign in to HamroSadhan";
+          const html = `<p>Hi ${existingUser.full_name},</p>
+                        <p>Your email is pending confirmation. Please verify your email by clicking the link below:</p>
+                        <a href="${confirmationUrl}">${confirmationUrl}</a>`;
+          await sendEmail(email, subject, html);
+        } catch (emailError) {
+          console.error("Error resending confirmation email:", emailError);
+          return new NextResponse(
+            JSON.stringify({
+              message: "Signup successful, but failed to resend confirmation email. Please contact support.",
+            }),
+            { status: 200, headers: { "Content-Type": "application/json" } }
+          );
+        }
+        return new NextResponse(
+          JSON.stringify({
+            message: "Email already registered but pending confirmation. Confirmation email resent.",
+          }),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      } else {
+        console.error("Email already registered:", email);
+        return new NextResponse(JSON.stringify({ error: "Email already registered" }), { status: 409, headers: { "Content-Type": "application/json" } })
+      }
     }
 
     const passwordHash = await bcrypt.hash(password, 10)
