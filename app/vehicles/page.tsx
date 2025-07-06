@@ -60,7 +60,7 @@ export default function VehiclesPage() {
     const locationId = searchParams.get("location") ? Number.parseInt(searchParams.get("location")!) : undefined
 
     setFilters({
-      type: type === "all" ? undefined : (type as "car" | "bike" | undefined),
+      type: type === "all" ? undefined : (type as "car" | "bike" | "scooter" | undefined),
       brand,
       fuel_type: fuel_type === "all" ? undefined : (fuel_type as "petrol" | "electric" | "diesel" | undefined),
       minPrice,

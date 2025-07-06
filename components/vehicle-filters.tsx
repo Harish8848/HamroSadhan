@@ -57,7 +57,7 @@ export function VehicleFilters({ initialFilters, locations }: VehicleFiltersProp
           <Label htmlFor="type">Vehicle Type</Label>
           <Select
             value={filters.type || "all"}
-            onValueChange={(value) => setFilters({ ...filters, type: value === "all" ? undefined : (value as "car" | "bike" | undefined) })}
+            onValueChange={(value) => setFilters({ ...filters, type: value === "all" ? undefined : (value as "car" | "bike" | "scooter" | undefined) })}
           >
             <SelectTrigger id="type">
               <SelectValue placeholder="All Types" />
@@ -66,6 +66,7 @@ export function VehicleFilters({ initialFilters, locations }: VehicleFiltersProp
               <SelectItem value="all">All Types</SelectItem>
               <SelectItem value="car">Car</SelectItem>
               <SelectItem value="bike">Bike</SelectItem>
+              <SelectItem value="scooter">Scooter</SelectItem>
             </SelectContent>
           </Select>
         </div>

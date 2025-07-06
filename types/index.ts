@@ -12,9 +12,9 @@ updated_at: string | Date
 
 export interface Vehicle {
   id: string
-  brand: string
+  brand: string 
   model: string
-  type: string
+  type:  string
   fuel_type: string
   status: "available" | "rented" | "maintenance"
   price_per_day: number
@@ -45,7 +45,7 @@ export interface Booking {
 }
 
 export interface VehicleFilter {
-  type?: "car" | "bike" | undefined
+  type?: "car" | "bike" | "scooter" | undefined
   brand?: string | undefined
   fuel_type?: "petrol" | "electric" | "diesel" | undefined
   minPrice?: number | undefined

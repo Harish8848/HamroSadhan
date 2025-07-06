@@ -6,7 +6,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Badge } from "@/components/ui/badge"
 import { formatCurrency } from "@/lib/utils"
 import type { Vehicle } from "@/types"
-import { Car, Bike } from "lucide-react"
+import { Car, Bike, Truck } from "lucide-react"
 
 interface VehicleListProps {
   vehicles: Vehicle[]
@@ -39,13 +39,37 @@ export function VehicleList({ vehicles }: VehicleListProps) {
               <div className="flex items-center justify-center h-full">
                 {vehicle.type === "car" ? (
                   <Car className="h-16 w-16 text-gray-400" />
+                ) : vehicle.type === "bike" || vehicle.type === "scooter" ? (
+                  <Bike className="h-16 w-16 text-gray-400" />
+                ) : vehicle.type === "jeep" ? (
+                  <Truck className="h-16 w-16 text-gray-400" />
                 ) : (
                   <Bike className="h-16 w-16 text-gray-400" />
                 )}
               </div>
             )}
-            <Badge className={`absolute top-2 right-2 ${vehicle.type === "car" ? "bg-blue-500" : "bg-green-500"}`}>
-              {vehicle.type === "car" ? "Car" : "Bike"}
+            <Badge
+              className={`absolute top-2 right-2 ${
+                vehicle.type === "car"
+                  ? "bg-blue-500"
+                  : vehicle.type === "bike"
+                  ? "bg-green-500"
+                  : vehicle.type === "scooter"
+                  ? "bg-yellow-500"
+                  : vehicle.type === "jeep"
+                  ? "bg-gray-700"
+                  : "bg-green-500"
+              }`}
+            >
+              {vehicle.type === "car"
+                ? "Car"
+                : vehicle.type === "bike"
+                ? "Bike"
+                : vehicle.type === "scooter"
+                ? "Scooter"
+                : vehicle.type === "jeep"
+                ? "Jeep"
+                : "Bike"}
             </Badge>
           </div>
           <CardHeader>
