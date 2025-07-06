@@ -5,10 +5,16 @@ const nextConfig = {
   devIndicators: false, 
 
   images: {
-    domains: ["imgd.aeplcdn.com", "assets.nepbike.com", "upload.wikimedia.org", "motoringworld.in", "www.financialexpress.com", "www.rentacarkerala.in", "krazyhorse.co.uk"],
+    remotePatterns: [
+      { protocol: "https", hostname: "imgd.aeplcdn.com" },
+      { protocol: "https", hostname: "assets.nepbike.com" },
+      { protocol: "https", hostname: "upload.wikimedia.org" },
+      { protocol: "https", hostname: "motoringworld.in" },
+      { protocol: "https", hostname: "www.financialexpress.com" },
+      { protocol: "https", hostname: "www.rentacarkerala.in" },
+      { protocol: "https", hostname: "krazyhorse.co.uk" },
+    ],
   },
-
-  
 }
 
 module.exports = nextConfig
