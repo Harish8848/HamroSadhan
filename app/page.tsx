@@ -5,11 +5,107 @@ import { useSearchParams, useRouter } from "next/navigation"
 import { useToast } from "@/components/ui/use-toast"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Car, Bike } from "lucide-react"
+import { Car, Bike, MapPin, Clock, Shield, Star, ChevronLeft, ChevronRight, Menu, X  } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { Footer } from "@/components/footer"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import Image from "next/image"
+
+
 
 export default function Home() {
+  //slider
+
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [activeFilter, setActiveFilter] = useState("all")
+
+  // Define a type for vehicle
+  type Vehicle = {
+    id: string | number
+    type: string
+    name: string
+    image: string
+    price: string
+    features: string[]
+    image_url?: string
+    price_per_day?: number
+  }
+
+  // vehicles state fetched from API
+  const [vehicles, setVehicles] = useState<Vehicle[]>([])
+  const [loadingVehicles, setLoadingVehicles] = useState(true)
+  const [vehiclesError, setVehiclesError] = useState<string | null>(null)
+
+  // Fetch vehicles from API on mount
+  useEffect(() => {
+    async function fetchVehicles() {
+      setLoadingVehicles(true)
+      setVehiclesError(null)
+      try {
+        const res = await fetch("/api/vehicles")
+        if (!res.ok) {
+          throw new Error("Failed to fetch vehicles")
+        }
+        const data = await res.json()
+        // Map API data to slider expected format
+        const mapped = data.map((v: {
+          id: string | number
+          type: string
+          name: string
+          image_url?: string
+          price_per_day?: number
+        }) => ({
+          id: v.id,
+          type: v.type,
+          name: v.name,
+          image: v.image_url || "/placeholder.svg",
+          price: `Rs. ${v.price_per_day?.toLocaleString() ?? "N/A"}`,
+          features: [], // API does not provide features, so empty array for now
+        }))
+        setVehicles(mapped)
+      } catch (error) {
+        setVehiclesError(error instanceof Error ? error.message : "An unknown error occurred")
+      } finally {
+        setLoadingVehicles(false)
+      }
+    }
+    fetchVehicles()
+  }, [])
+
+  // Filter vehicles based on activeFilter
+  const filteredVehicles = vehicles.filter(
+    (vehicle) => activeFilter === "all" || vehicle.type === activeFilter
+  )
+
+  // Slide auto-advance effect
+  useEffect(() => {
+    if (filteredVehicles.length === 0) return
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % filteredVehicles.length)
+    }, 4000)
+    return () => clearInterval(timer)
+  }, [filteredVehicles.length])
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % filteredVehicles.length)
+  }
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + filteredVehicles.length) % filteredVehicles.length)
+  }
+
+
+
+
+
+
+
+
+
+
+
   const searchParams = useSearchParams()
   const router = useRouter()
   const { toast } = useToast()
@@ -72,47 +168,196 @@ export default function Home() {
 
   
   // Render homepage content
-  return (
+  return (    
     <div className="flex flex-col min-h-[calc(100vh-4rem)]">
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-red-50">
-        <div className="container px-4 md:px-6">
-          <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
-            <div className="flex flex-col justify-center space-y-4">
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none text-red-600">
-                  HamroSadhan - Your Trusted Vehicle Rental
-                </h1>
-                <p className="max-w-[600px] text-gray-500 md:text-xl">
-                  Rent cars and bikes in Nepal with ease. Browse our selection of vehicles and book your next ride
-                  today.
-                </p>
-              </div>
-              <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                <Link href="/vehicles?type=car">
-                  <Button className="bg-red-600 hover:bg-red-700">
-                    <Car className="mr-2 h-4 w-4" />
-                    Browse Cars
-                  </Button>
-                </Link>
-                <Link href="/vehicles?type=bike">
-                  <Button variant="outline" className="border-red-600 text-red-600 hover:bg-red-50">
-                    <Bike className="mr-2 h-4 w-4" />
-                    Browse Bikes
-                  </Button>
-                </Link>
-              </div>
+
+  {/* Hero Section with Background Video */}
+  <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
+        {/* Background Video */}
+        <div className="absolute inset-0 z-0">
+          <video autoPlay muted loop playsInline className="w-full h-full object-cover">
+            <source src="/HamroSadhanBgVideo.mov" type="video/mp4" />
+            {/* Fallback background */}
+            <div className="w-full h-full bg-gradient-to-r from-blue-900 via-purple-900 to-blue-900"></div>
+          </video>
+          <div className="absolute inset-0 bg-black/50"></div>
+        </div>
+
+        {/* Hero Content */}
+        <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+            Your Journey,
+            <span className="block bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              Our Wheels
+            </span>
+          </h1>
+          <p className="text-xl md:text-2xl mb-8 text-gray-200 max-w-2xl mx-auto">
+            Rent cars and bikes instantly in Nepal. Safe, affordable, and convenient transportation at your fingertips.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <Link href="/vehicles?type=car">
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-3">
+              <Car className="w-5 h-5 mr-2" />
+              Rent a Car
+            </Button>
+            </Link>
+
+            <Link href="/vehicles?type=bike">
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-white text-white hover:bg-white hover:text-gray-900 text-lg px-8 py-3 bg-transparent"
+            >
+              <Bike className="w-5 h-5 mr-2" />
+              Rent a Bike
+            </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white animate-bounce">
+          <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center">
+            <div className="w-1 h-3 bg-white rounded-full mt-2 animate-pulse"></div>
+          </div>
+        </div>
+      </section>
+
+        {/* Vehicle Slider Section */}
+        <section id="vehicles" className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">Choose Your Ride</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              From economy cars to premium bikes, find the perfect vehicle for your journey
+            </p>
+          </div>
+
+          {/* Filter Buttons */}
+          <div className="flex justify-center mb-8">
+            <div className="flex bg-white rounded-full p-1 shadow-lg">
+              <button
+                onClick={() => setActiveFilter("all")}
+                className={`px-6 py-2 rounded-full transition-all ${
+                  activeFilter === "all"
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                All Vehicles
+              </button>
+              <button
+                onClick={() => setActiveFilter("car")}
+                className={`px-6 py-2 rounded-full transition-all flex items-center gap-2 ${
+                  activeFilter === "car"
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                <Car className="w-4 h-4" />
+                Cars
+              </button>
+              <button
+                onClick={() => setActiveFilter("bike")}
+                className={`px-6 py-2 rounded-full transition-all duration[3000] flex items-center gap-2 ${
+                  activeFilter === "bike"
+                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                <Bike className="w-4 h-4" />
+                Bikes
+              </button>
             </div>
-            <div className="mx-auto lg:mr-0">
-              <div className="aspect-video overflow-hidden rounded-xl">
-                <img
-                  alt="Hero Image"
-                  className="object-cover w-full h-full"  
-                  loading="lazy"
-                  height="500"
-                  src="/hamroSadhan.png"
-                  width="550"
-                />
+          </div>
+
+          {/* Vehicle Slider */}
+          <div className="relative max-w-8xl mx-auto ">
+          <div className="overflow-hidden rounded-2xl">
+            {loadingVehicles ? (
+              <div className="text-center py-20 text-gray-500">Loading vehicles...</div>
+            ) : vehiclesError ? (
+              <div className="text-center py-20 text-red-600">Error: {vehiclesError}</div>
+            ) : filteredVehicles.length === 0 ? (
+              <div className="text-center py-20 text-gray-500">No vehicles found.</div>
+            ) : (
+              <div
+                className="flex transition-transform duration-500 ease-in-out"
+                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+              >
+                {filteredVehicles.map((vehicle, index) => (
+                  <div key={vehicle.id} className="w-full flex-shrink-0">
+                    <Card className="mx-4 overflow-hidden shadow-xl hover:shadow-2xl transition-shadow">
+                      <div className="relative ">
+                        <Image
+                          src={vehicle.image || "/placeholder.svg"}
+                          alt={vehicle.name}
+                          width={600}
+                          height={600}
+                          className="w-full h-64 object-contain  transition-transform duration-300 hover:scale-150 m-24" loading="lazy"
+                        />
+                        <Badge className="absolute top-4 left-4 bg-gradient-to-r from-blue-600 to-purple-600">
+                          {vehicle.type === "car" ? (
+                            <Car className="w-3 h-3 mr-1" />
+                          ) : (
+                            <Bike className="w-3 h-3 mr-1" />
+                          )}
+                          {vehicle.type.toUpperCase()}
+                        </Badge>
+                        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1">
+                          <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                        </div>
+                      </div>
+                      <CardContent className="p-6">
+                        <h3 className="text-2xl font-bold mb-2">{vehicle.name}</h3>
+                        <p className="text-3xl font-bold text-blue-600 mb-4">{vehicle.price}</p>
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {vehicle.features.map((feature, idx) => (
+                            <Badge key={idx} variant="secondary" className="text-xs">
+                              {feature}
+                            </Badge>
+                          ))}
+                        </div>
+                        <Link href={`/vehicles/${vehicle.id}`} className="w-full">
+                        <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                          Book Now
+                        </Button>
+                        </Link>
+                      </CardContent>
+                    </Card>
+                  </div>
+                ))}
               </div>
+            )}
+          </div>
+
+            {/* Navigation Buttons */}
+            <button
+              onClick={prevSlide}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg hover:bg-white transition-colors"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <button
+              onClick={nextSlide}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg hover:bg-white transition-colors"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+
+            {/* Slide Indicators */}
+            <div className="flex justify-center mt-6 gap-2">
+              {filteredVehicles.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-colors ${
+                    index === currentSlide ? "bg-gradient-to-r from-blue-600 to-purple-600" : "bg-gray-300"
+                  }`}
+                />
+              ))}
             </div>
           </div>
         </div>
