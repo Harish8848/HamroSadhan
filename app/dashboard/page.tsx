@@ -24,7 +24,9 @@ export default function DashboardPage() {
           throw new Error("Failed to fetch bookings")
         }
         const data = await res.json()
-        setBookings(data || [])
+        // Filter out bookings with status "cancelled" (canceled from pending)
+        const filteredBookings = (data || []).filter((booking: any) => booking.status !== "cancelled")
+        setBookings(filteredBookings)
       } catch (error) {
         console.error("Error fetching bookings:", error)
       } finally {
