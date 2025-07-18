@@ -37,7 +37,8 @@ export default function AdminPage() {
         // Fetch bookings
         const bookingsRes = await fetch("/api/bookings")
         const bookingsData = await bookingsRes.json()
-        setBookings(Array.isArray(bookingsData) ? bookingsData : [])
+        const filteredBookings = Array.isArray(bookingsData) ? bookingsData.filter((b) => b.status !== "cancelled") : []
+        setBookings(filteredBookings)
 
         // Fetch users
         const usersRes = await fetch("/api/users")
@@ -139,15 +140,16 @@ export default function AdminPage() {
           <AdminVehicles vehicles={vehicles} setVehicles={setVehicles} />
         </TabsContent>
 
-        <TabsContent value="bookings">
+          <TabsContent value="bookings">
           <AdminBookings bookings={bookings} refreshBookings={async () => {
             try {
               const bookingsRes = await fetch("/api/bookings")
               const bookingsData = await bookingsRes.json()
-              setBookings(Array.isArray(bookingsData) ? bookingsData : [])
+              const filteredBookings = Array.isArray(bookingsData) ? bookingsData.filter((b) => b.status !== "cancelled") : []
+              setBookings(filteredBookings)
               setStats((prev) => ({
                 ...prev,
-                activeBookings: Array.isArray(bookingsData) ? bookingsData.filter((b) => b.status === "confirmed").length : 0,
+                activeBookings: filteredBookings.filter((b) => b.status === "confirmed").length,
               }))
             } catch (error) {
               console.error("Error refreshing bookings:", error)
