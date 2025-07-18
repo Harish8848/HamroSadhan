@@ -21,9 +21,10 @@ import { UserIcon, Edit, Trash2 } from "lucide-react"
 
 interface AdminUsersProps {
   users: User[]
+  onUserDeleted?: (userId: string) => void
 }
 
-export function AdminUsers({ users }: AdminUsersProps) {
+export function AdminUsers({ users, onUserDeleted }: AdminUsersProps) {
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
@@ -89,6 +90,10 @@ export function AdminUsers({ users }: AdminUsersProps) {
         title: "User deleted",
         description: "The user has been deleted successfully",
       })
+
+      if (onUserDeleted && selectedUser) {
+        onUserDeleted(selectedUser.id)
+      }
 
       setIsDeleteDialogOpen(false)
       setSelectedUser(null)

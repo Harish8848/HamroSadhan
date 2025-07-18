@@ -37,6 +37,10 @@ export default function DashboardPage() {
     fetchBookings()
   }, [user])
 
+  const handleBookingCancelled = (cancelledBookingId: string) => {
+    setBookings((prevBookings) => prevBookings.filter((booking) => booking.id !== cancelledBookingId))
+  }
+
   if (!user) {
     return (
       <div className="container py-8 flex items-center justify-center min-h-[calc(100vh-4rem)]">
@@ -66,7 +70,7 @@ export default function DashboardPage() {
               <Loader2 className="h-8 w-8 animate-spin text-red-600" />
             </div>
           ) : (
-            <BookingList bookings={bookings} />
+            <BookingList bookings={bookings} onBookingCancelled={handleBookingCancelled} />
           )}
         </TabsContent>
 

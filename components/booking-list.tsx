@@ -35,11 +35,12 @@ interface Booking {
 
 interface BookingListProps {
   bookings: Booking[]
+  onBookingCancelled?: (bookingId: string) => void
 }
 
 import { useAuth } from "@/contexts/auth-context"
 
-export function BookingList({ bookings }: BookingListProps) {
+export function BookingList({ bookings, onBookingCancelled }: BookingListProps) {
   const { user } = useAuth()
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -126,6 +127,10 @@ export function BookingList({ bookings }: BookingListProps) {
         title: "Booking cancelled",
         description: "Your booking has been cancelled successfully",
       })
+
+      if (onBookingCancelled && selectedBooking) {
+        onBookingCancelled(selectedBooking.id)
+      }
 
       setSelectedBooking(null)
     } catch (error: any) {
