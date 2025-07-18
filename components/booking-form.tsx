@@ -13,6 +13,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
+import PaymentButton from "@/components/payment-button"
 
 interface BookingFormProps {
   vehicle: Vehicle
@@ -22,6 +23,7 @@ export function BookingForm({ vehicle }: BookingFormProps) {
   const [startDate, setStartDate] = useState<Date | undefined>(undefined)
   const [endDate, setEndDate] = useState<Date | undefined>(undefined)
   const [isLoading, setIsLoading] = useState(false)
+  const [showPayment, setShowPayment] = useState(false)
   const { user } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
@@ -82,6 +84,7 @@ export function BookingForm({ vehicle }: BookingFormProps) {
           description: "This vehicle is already booked for the selected dates",
           variant: "destructive",
         })
+        setIsLoading(false)
         return
       }
 
@@ -106,12 +109,12 @@ export function BookingForm({ vehicle }: BookingFormProps) {
         throw new Error(errorData.error || "Failed to create booking")
       }
 
+      // Instead of redirecting, show payment button
+      setShowPayment(true)
       toast({
         title: "Booking successful",
-        description: "Your booking has been submitted and is pending confirmation",
+        description: "Please proceed with payment",
       })
-
-      router.push("/dashboard")
     } catch (error: any) {
       toast({
         title: "Booking failed",
@@ -121,6 +124,16 @@ export function BookingForm({ vehicle }: BookingFormProps) {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  if (showPayment) {
+    return (
+      <PaymentButton
+        amount={vehicle.price_per_day * totalDays}
+        productId={vehicle.id}
+        productName={`${vehicle.type} booking`}
+      />
+    )
   }
 
   return (

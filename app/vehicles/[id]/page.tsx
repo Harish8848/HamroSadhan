@@ -1,21 +1,20 @@
-import { notFound, redirect } from "next/navigation"
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "@/app/api/auth/[...nextauth].ts"
-import { Footer } from "@/components/footer"
-import { BookingForm } from "@/components/booking-form"
-import { VehicleDetails } from "@/components/vehicle-details"
-import type { Vehicle } from "@/types"
-import prisma from "@/lib/prisma"
+import { notFound } from "next/navigation";
 
-export const dynamic = "force-dynamic"
+import { VehicleDetails } from "@/components/vehicle-details";
+import { BookingForm } from "@/components/booking-form";
+import { Footer } from "@/components/footer";
+import prisma from "@/lib/prisma";
+import type { Vehicle } from "@/types";
+
+export const dynamic = "force-dynamic";
 
 async function getVehicle(id: string): Promise<Vehicle | null> {
   const vehicle = await prisma.vehicles.findUnique({
     where: { id: Number(id) },
-  })
+  });
 
   if (!vehicle) {
-    return null
+    notFound();
   }
 
   return {
@@ -26,19 +25,18 @@ async function getVehicle(id: string): Promise<Vehicle | null> {
     status: vehicle.status as "available" | "rented" | "maintenance",
     price_per_day: Number(vehicle.price_per_day),
     created_at: vehicle.created_at.toISOString(),
-  }
+  };
 }
 
 export default async function VehicleDetailsPage({ params }: { params: Promise<{ id: string }> }) {
-  const session = await getServerSession(authOptions)
-  console.log("VehicleDetailsPage session:", session)
- 
+  // We cannot use hooks in async server component, so we will move payment button logic to client component
+  // Instead, we will pass session info as prop to a new client component that handles booking and payment button visibility
 
-  const awaitedParams = await params
-  const vehicle = await getVehicle(awaitedParams.id)
+  const awaitedParams = await params;
+  const vehicle = await getVehicle(awaitedParams.id);
 
   if (!vehicle) {
-    notFound()
+    notFound();
   }
 
   return (
@@ -60,5 +58,5 @@ export default async function VehicleDetailsPage({ params }: { params: Promise<{
 
       <Footer />
     </div>
-  )
+  );
 }
