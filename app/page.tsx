@@ -89,10 +89,12 @@ export default function Home() {
   }, [filteredVehicles.length])
 
   const nextSlide = () => {
+    if (filteredVehicles.length === 0) return
     setCurrentSlide((prev) => (prev + 1) % filteredVehicles.length)
   }
 
   const prevSlide = () => {
+    if (filteredVehicles.length === 0) return
     setCurrentSlide((prev) => (prev - 1 + filteredVehicles.length) % filteredVehicles.length)
   }
 
@@ -133,7 +135,7 @@ export default function Home() {
       }
       confirmEmail()
     }
-  }, [searchParams, toast])
+  }, [searchParams, toast, router])
 
 
   if (loading || localLoading) {

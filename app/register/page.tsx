@@ -1,8 +1,6 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/auth-context"
@@ -10,62 +8,77 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import  { useEffect } from "react"
 import { useToast } from "@/components/ui/use-toast"
-import { Footer } from "@/components/footer"
 import { Loader2 } from "lucide-react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { signupSchema } from "@/lib/schemas/signup-schema"
+import type { z } from "zod"
+
+type SignupFormData = z.infer<typeof signupSchema>
 
 export default function RegisterPage() {
   const router = useRouter()
   const { signUp } = useAuth()
   const { toast } = useToast()
 
-  const [fullName, setFullName] = useState("")
-  const [email, setEmail] = useState("")
-  const [phone, setPhone] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
+  })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
 
-    if (password !== confirmPassword) {
-      toast({
-        title: "Passwords don't match",
-        description: "Please make sure your passwords match",
-        variant: "destructive",
+  const onSubmit = async (data: SignupFormData) => {
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+          fullName: data.fullName,
+          phone: "", // optional, can be updated to include phone input value
+        }),
       })
-      return
-    }
 
-    setIsLoading(true)
+      const result = await response.json()
 
-      try {
-        const { error } = await signUp(email, password, fullName, phone)
-
-        if (error) throw error
-
+      if (!response.ok) {
         toast({
-          title: "Please verify the email to login",
+          title: "Registration failed",
+          description: result.error || "An error occurred during registration",
+          variant: "destructive",
         })
+        return
+      }
 
-        setTimeout(() => {
-          router.push("/login")
-        }, 4000) // 4 seconds delay before redirect
-      } catch (error: any) {
+      toast({
+        title: "Registration successful",
+        description: result.message || `✅ Email sent to ${data.email}. Please confirm your email.`,
+        variant: "default",
+      })
+
+      setTimeout(() => {
+        router.push("/login")
+      }, 5000)
+    } catch (error: any) {
       toast({
         title: "Registration failed",
         description: error.message || "An error occurred during registration",
         variant: "destructive",
       })
-    } finally {
-      setIsLoading(false)
     }
   }
 
   return (
     <div className="flex flex-col min-h-screen">
-
       <main className="flex-1 flex items-center justify-center py-12">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
@@ -73,59 +86,41 @@ export default function RegisterPage() {
             <CardDescription>Enter your details to create your account</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+              <div className="space-y-1">
                 <Label htmlFor="fullName">Full Name</Label>
-                <Input
-                  id="fullName"
-                  placeholder="John Doe"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  required
-                />
+                <Input id="fullName" placeholder="John Doe" {...register("fullName")} />
+                {errors.fullName && (
+                  <p className="text-sm text-red-600 mt-1">{errors.fullName.message}</p>
+                )}
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
+                <Input id="email" type="email" placeholder="name@example.com" {...register("email")} />
+                {errors.email && (
+                  <p className="text-sm text-red-600 mt-1">{errors.email.message}</p>
+                )}
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label htmlFor="phone">Phone Number (Optional)</Label>
-                <Input
-                  id="phone"
-                  placeholder="+977 98XXXXXXXX"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
+                <Input id="phone" placeholder="+977 98XXXXXXXX" />
+               </div>
+              <div className="space-y-1">
                 <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
+                <Input id="password" type="password" {...register("password")} />
+                {errors.password && (
+                  <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>
+                )}
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                />
+                <Input id="confirmPassword" type="password" {...register("confirmPassword")} />
+                {errors.confirmPassword && (
+                  <p className="text-sm text-red-600 mt-1">{errors.confirmPassword.message}</p>
+                )}
               </div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? (
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Creating account...
@@ -146,8 +141,6 @@ export default function RegisterPage() {
           </CardFooter>
         </Card>
       </main>
-
-      <Footer />
     </div>
   )
 }

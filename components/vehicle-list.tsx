@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -30,10 +31,11 @@ export function VehicleList({ vehicles }: VehicleListProps) {
         <Card key={vehicle.id} className="overflow-hidden">
           <div className="aspect-video relative overflow-hidden bg-gray-100">
             {vehicle.image_url ? (
-              <img
+              <Image
                 src={vehicle.image_url || "/placeholder.svg"}
                 alt={`${vehicle.brand} ${vehicle.model}`}
-                className="object-cover w-full h-full"
+                layout="fill"
+                objectFit="cover"
               />
             ) : (
               <div className="flex items-center justify-center h-full">

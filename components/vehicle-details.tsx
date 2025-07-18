@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { formatCurrency } from "@/lib/utils"
 import type { Vehicle } from "@/types"
 import { Car, Bike, Fuel, Calendar } from "lucide-react"
+import Image from "next/image"
 
 interface VehicleDetailsProps {
   vehicle: Vehicle
@@ -15,10 +16,11 @@ export function VehicleDetails({ vehicle }: VehicleDetailsProps) {
     <Card>
       <div className="aspect-video relative overflow-hidden bg-gray-100">
         {vehicle.image_url ? (
-          <img
+          <Image
             src={vehicle.image_url || "/placeholder.svg"}
             alt={`${vehicle.brand} ${vehicle.model}`}
-            className="object-cover w-full h-full"
+            layout="fill"
+            objectFit="cover"
           />
         ) : (
           <div className="flex items-center justify-center h-full">

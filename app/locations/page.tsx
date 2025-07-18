@@ -298,7 +298,7 @@ export default function LocationsPage() {
           <CardContent className="text-center py-8">
             <h2 className="text-2xl font-bold mb-4">Can't Find a Location Near You?</h2>
             <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-              We're expanding across Nepal! Contact us to suggest a new location or inquire about vehicle delivery
+              We&apos;re expanding across Nepal! Contact us to suggest a new location or inquire about vehicle delivery
               services in your area.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

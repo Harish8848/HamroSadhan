@@ -51,6 +51,8 @@ export function AdminVehicles({ vehicles, setVehicles }: AdminVehiclesProps) {
     description: "",
   })
 
+  const { toast } = useToast()
+
   useEffect(() => {
     async function fetchLocations() {
       try {
@@ -72,9 +74,7 @@ export function AdminVehicles({ vehicles, setVehicles }: AdminVehiclesProps) {
       }
     }
     fetchLocations()
-  }, [])
-
-  const { toast } = useToast()
+  }, [toast])
 
   const resetForm = () => {
     setFormData({

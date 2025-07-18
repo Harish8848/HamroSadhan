@@ -169,7 +169,7 @@ export default function AboutPage() {
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-4">24/7 Support</h3>
               <p className="text-gray-600">
-                Round-the-clock customer support to assist you during your journey. We're always here to help.
+                Round-the-clock customer support to assist you during your journey. We&apos;re always here to help.
               </p>
             </div>
 

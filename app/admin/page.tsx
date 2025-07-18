@@ -61,6 +61,14 @@ export default function AdminPage() {
     fetchData()
   }, [user])
 
+  const handleUserDeleted = (userId: string) => {
+    setUsers((prevUsers) => prevUsers.filter((user) => user.id !== userId))
+    setStats((prevStats) => ({
+      ...prevStats,
+      totalUsers: prevStats.totalUsers - 1,
+    }))
+  }
+
   if (!user || user.role !== "admin") {
     return (
       <div className="container py-8 flex items-center justify-center min-h-[calc(100vh-4rem)]">
@@ -158,7 +166,7 @@ export default function AdminPage() {
         </TabsContent>
 
         <TabsContent value="users">
-          <AdminUsers users={users} />
+          <AdminUsers users={users} onUserDeleted={handleUserDeleted} />
         </TabsContent>
 
         <TabsContent value="reviews">

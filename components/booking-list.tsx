@@ -242,7 +242,7 @@ export function BookingList({ bookings, onBookingCancelled }: BookingListProps) 
       <Card>
         <CardHeader>
           <CardTitle>No Bookings</CardTitle>
-          <CardDescription>You haven't made any bookings yet.</CardDescription>
+          <CardDescription>You haven&apos;t made any bookings yet.</CardDescription>
         </CardHeader>
       </Card>
     )

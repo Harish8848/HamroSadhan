@@ -230,7 +230,7 @@ export default function ContactPage() {
             </Card>
 
             <Card className="p-6">
-              <h3 className="font-semibold text-gray-900 mb-2">What's included in the rental price?</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">What&apos;s included in the rental price?</h3>
               <p className="text-gray-600">
                 Basic insurance, 24/7 roadside assistance, GPS navigation (for cars), and safety gear (for bikes) are
                 included. Additional insurance options are available.
