@@ -6,8 +6,13 @@ import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Phone, Mail, MapPin, Clock, MessageCircle, Send } from "lucide-react"
 import { Footer } from "@/components/footer"
+import prisma from "@/lib/prisma"
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const locations = await prisma.locations.findMany({
+    orderBy: { name: "asc" },
+  })
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Hero Section */}
@@ -41,26 +46,6 @@ export default function ContactPage() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
-                    <Input id="firstName" placeholder="Enter your first name" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input id="lastName" placeholder="Enter your last name" />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input id="email" type="email" placeholder="your.email@example.com" />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input id="phone" type="tel" placeholder="+977 98XXXXXXXX" />
-                </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="subject">Subject</Label>
                   <Input id="subject" placeholder="What can we help you with?" />
@@ -74,7 +59,7 @@ export default function ContactPage() {
                     rows={5}
                   />
                 </div>
-
+                </div>
                 <Button className="w-full text-lg py-3" size="lg">
                   <Send className="h-5 w-5 mr-2" />
                   Send Message
@@ -174,32 +159,16 @@ export default function ContactPage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center p-6">
-              <div className="p-3 bg-blue-100 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
-                <MapPin className="h-6 w-6 text-blue-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Kathmandu</h3>
-              <p className="text-gray-600 text-sm mb-3">Thamel, New Road, Durbar Marg</p>
-              <Badge variant="secondary">Main Hub</Badge>
-            </Card>
-
-            <Card className="text-center p-6">
-              <div className="p-3 bg-green-100 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
-                <MapPin className="h-6 w-6 text-green-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Pokhara</h3>
-              <p className="text-gray-600 text-sm mb-3">Lakeside, Mahendrapul</p>
-              <Badge variant="secondary">Tourist Hub</Badge>
-            </Card>
-
-            <Card className="text-center p-6">
-              <div className="p-3 bg-purple-100 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
-                <MapPin className="h-6 w-6 text-purple-600" />
-              </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Chitwan</h3>
-              <p className="text-gray-600 text-sm mb-3">Sauraha, Bharatpur</p>
-              <Badge variant="secondary">Adventure Base</Badge>
-            </Card>
+            {locations.map((location: any) => (
+              <Card key={location.id} className="text-center p-6">
+                <div className="p-3 bg-blue-100 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                  <MapPin className="h-6 w-6 text-blue-600" />
+                </div>
+                <h3 className="font-semibold text-gray-900 mb-2">{location.name}</h3>
+                <p className="text-gray-600 text-sm mb-3">{location.address}</p>
+                <Badge variant="secondary">{location.city}</Badge>
+              </Card>
+            ))}
           </div>
         </div>
       </section>

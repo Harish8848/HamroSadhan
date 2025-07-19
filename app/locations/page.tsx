@@ -28,7 +28,10 @@ type Location = {
   vehicles: Vehicle[]
 }
 
+import { useRouter } from "next/navigation"
+
 export default function LocationsPage() {
+  const router = useRouter()
   const [locations, setLocations] = useState<Location[]>([])
   const [filteredLocations, setFilteredLocations] = useState<Location[]>([])
   const [loading, setLoading] = useState(true)
@@ -277,7 +280,11 @@ export default function LocationsPage() {
 
                     {/* Action Buttons */}
                     <div className="flex gap-2 pt-2">
-                      <Button className="flex-1" size="sm">
+                      <Button className="flex-1" size="sm" onClick={() => {
+                        const query = encodeURIComponent(`${location.address}, ${location.city}`)
+                        const url = `https://www.google.com/maps/dir/?api=1&destination=${query}`
+                        window.open(url, "_blank")
+                      }}>
                         <Navigation className="h-4 w-4 mr-1" />
                         Get Directions
                       </Button>
@@ -302,14 +309,12 @@ export default function LocationsPage() {
               services in your area.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="outline" size="lg" className="bg-slate-950 text-white">
-                Request New Location
-              </Button>
+              
               <Button
                 variant="outline"
                 size="lg"
                 className="bg-black text-white border-white hover:bg-white hover:text-blue-600"
-              >
+              onClick={() => router.push("/contact?subject=Location%20Suggestion")}>
                 Contact Support
               </Button>
             </div>

@@ -59,7 +59,7 @@ export const authOptions: NextAuthOptions = {
         if (user) {
           token.id = (user as any).id
           token.role = (user as any).role
-          token.fullName = (user as any).fullName || (user as any).name || null;
+          token.full_name = (user as any).full_name || (user as any).name || null;
           token.phone = (user as any).phone || null;
         }
         console.log("NextAuth jwt callback token after:", token)
@@ -70,7 +70,8 @@ export const authOptions: NextAuthOptions = {
         if (token) {
           (session.user as any).id = (token as any).id
           (session.user as any).role = (token as any).role
-          (session.user as any).fullName = (token as any).fullName || null;
+          (session.user as any).full_name = (token as any).full_name || null;
+          (session.user as any).name = (token as any).full_name || null;
           (session.user as any).phone = (token as any).phone || null;
         }
         console.log("NextAuth session callback session after:", session)

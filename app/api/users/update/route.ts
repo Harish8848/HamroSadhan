@@ -1,31 +1,34 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 
-export async function PATCH(request: Request) {
+export async function PATCH(request: NextRequest) {
   try {
-    const { userId, fullName, phone } = await request.json()
+    const { userId, full_name, phone } = await request.json()
 
-    if (!userId || !fullName) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+    if (!userId) {
+      return NextResponse.json({ error: "User ID is required" }, { status: 400 })
     }
 
-    const updateData: any = {
-      full_name: fullName,
-      updated_at: new Date(),
+    const updateData: { full_name?: string; phone?: string } = {}
+    if (full_name !== undefined) {
+      updateData.full_name = full_name
     }
-
-    if (phone !== undefined && phone !== null) {
+    if (phone !== undefined) {
       updateData.phone = phone
     }
 
-    const updatedUser = await prisma.users.update({
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ message: "No data to update" }, { status: 200 })
+    }
+
+    await prisma.users.update({
       where: { id: userId },
       data: updateData,
     })
 
-    return NextResponse.json(updatedUser)
+    return NextResponse.json({ message: "Profile updated successfully" }, { status: 200 })
   } catch (error) {
-    console.error("Error updating user profile:", error)
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 })
+    console.error("Update profile error:", error)
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 })
   }
 }

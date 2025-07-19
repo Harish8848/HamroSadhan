@@ -1,22 +1,31 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useAuth } from "@/contexts/auth-context"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { AdminVehicles } from "@/components/admin-vehicles"
 import { AdminBookings } from "@/components/admin-bookings"
 import { AdminUsers } from "@/components/admin-users"
 import AdminReviews from "@/components/admin-reviews"
+import AdminLocations from "@/components/admin-locations"
 import type { Vehicle, Booking, User } from "@/types"
-import { UserProfile } from "@/components/user-profile"
-import { Loader2, Users, Car, CalendarCheck } from "lucide-react"
+import { Loader2, Users, Car, CalendarCheck, MapPin } from "lucide-react"
+import { useAuth } from "@/contexts/auth-context"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+// Define Location type to match admin-locations.tsx
+type Location = {
+  id: number
+  name: string
+  address: string
+  city: string
+}
 
 export default function AdminPage() {
   const { user } = useAuth()
   const [vehicles, setVehicles] = useState<Vehicle[]>([])
   const [bookings, setBookings] = useState<Booking[]>([])
   const [users, setUsers] = useState<User[]>([])
+  const [locations, setLocations] = useState<Location[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -29,30 +38,55 @@ export default function AdminPage() {
       if (!user || user.role !== "admin") return
 
       try {
-        // Fetch vehicles
-        const vehiclesRes = await fetch("/api/vehicles")
-        const vehiclesData = await vehiclesRes.json()
-        setVehicles(vehiclesData || [])
+        const [vehiclesRes, bookingsRes, usersRes, locationsRes] = await Promise.all([
+          fetch("/api/vehicles"),
+          fetch("/api/bookings"),
+          fetch("/api/users"),
+          fetch("/api/locations"),
+        ])
 
-        // Fetch bookings
-        const bookingsRes = await fetch("/api/bookings")
-        const bookingsData = await bookingsRes.json()
+        if (!vehiclesRes.ok || !bookingsRes.ok || !usersRes.ok || !locationsRes.ok) {
+          throw new Error("Failed to fetch one or more resources")
+        }
+
+        const [vehiclesData, bookingsData, usersData, locationsData] = await Promise.all([
+          vehiclesRes.json(),
+          bookingsRes.json(),
+          usersRes.json(),
+          locationsRes.json(),
+        ])
+
+        setVehicles(Array.isArray(vehiclesData) ? vehiclesData : [])
         const filteredBookings = Array.isArray(bookingsData) ? bookingsData.filter((b) => b.status !== "cancelled") : []
         setBookings(filteredBookings)
+        setUsers(Array.isArray(usersData) ? usersData : [])
+        setLocations(
+          Array.isArray(locationsData)
+            ? locationsData.map((loc) => ({
+                id: typeof loc.id === "number" ? loc.id : Number(loc.id),
+                name: loc.name,
+                address: loc.address,
+                city: loc.city,
+              }))
+            : []
+        )
 
-        // Fetch users
-        const usersRes = await fetch("/api/users")
-        const usersData = await usersRes.json()
-        setUsers(usersData || [])
-
-        // Set stats
         setStats({
           totalUsers: usersData?.length || 0,
           totalVehicles: vehiclesData?.length || 0,
-          activeBookings: Array.isArray(bookingsData) ? bookingsData.filter((b: Booking) => b.status === "confirmed").length : 0,
+          activeBookings: filteredBookings.filter((b: Booking) => b.status === "confirmed").length,
         })
       } catch (error) {
         console.error("Error fetching admin data:", error)
+        setVehicles([])
+        setBookings([])
+        setUsers([])
+        setLocations([])
+        setStats({
+          totalUsers: 0,
+          totalVehicles: 0,
+          activeBookings: 0,
+        })
       } finally {
         setIsLoading(false)
       }
@@ -93,10 +127,6 @@ export default function AdminPage() {
   return (
     <div className="container py-8">
       <h1 className="text-3xl font-bold mb-8 text-red-600">Admin Dashboard</h1>
-
-      <div className="mb-8 max-w-md">
-        {/* <UserProfile user={user} /> */}
-      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <Card>
@@ -142,13 +172,14 @@ export default function AdminPage() {
           <TabsTrigger value="bookings">Bookings</TabsTrigger>
           <TabsTrigger value="users">Users</TabsTrigger>
           <TabsTrigger value="reviews">Reviews</TabsTrigger>
+          <TabsTrigger value="locations">Locations</TabsTrigger>
         </TabsList>
 
         <TabsContent value="vehicles">
           <AdminVehicles vehicles={vehicles} setVehicles={setVehicles} />
         </TabsContent>
 
-          <TabsContent value="bookings">
+        <TabsContent value="bookings">
           <AdminBookings bookings={bookings} refreshBookings={async () => {
             try {
               const bookingsRes = await fetch("/api/bookings")
@@ -172,7 +203,11 @@ export default function AdminPage() {
         <TabsContent value="reviews">
           <AdminReviews />
         </TabsContent>
+
+        <TabsContent value="locations">
+          <AdminLocations locations={locations} setLocations={setLocations} />
+        </TabsContent>
       </Tabs>
     </div>
-  );
+  )
 }

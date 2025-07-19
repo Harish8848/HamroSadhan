@@ -443,80 +443,98 @@ export function AdminVehicles({ vehicles, setVehicles }: AdminVehiclesProps) {
 
       {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Edit Vehicle</DialogTitle>
-            <DialogDescription>Update the details of the vehicle</DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Vehicle</DialogTitle>
+              <DialogDescription>Update the details of the vehicle</DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-type">Vehicle Type</Label>
+                  <Select value={formData.type} onValueChange={(value) => handleSelectChange("type", value)}>
+                    <SelectTrigger id="edit-type">
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="car">Car</SelectItem>
+                      <SelectItem value="bike">Bike</SelectItem>
+                      <SelectItem value="scooter">Scooter</SelectItem>
+                      <SelectItem value="jeep">Jeep</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-status">Status</Label>
+                  <Select value={formData.status} onValueChange={(value) => handleSelectChange("status", value)}>
+                    <SelectTrigger id="edit-status">
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="available">Available</SelectItem>
+                      <SelectItem value="rented">Rented</SelectItem>
+                      <SelectItem value="maintenance">Maintenance</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-type">Vehicle Type</Label>
-                <Select value={formData.type} onValueChange={(value) => handleSelectChange("type", value)}>
-                  <SelectTrigger id="edit-type">
-                    <SelectValue placeholder="Select type" />
+                <Label htmlFor="edit-brand">Brand</Label>
+                <Input id="edit-brand" name="brand" value={formData.brand} onChange={handleInputChange} required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-model">Model</Label>
+                <Input id="edit-model" name="model" value={formData.model} onChange={handleInputChange} required />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-price_per_day">Price Per Day (NPR)</Label>
+                  <Input
+                    id="edit-price_per_day"
+                    name="price_per_day"
+                    type="number"
+                    value={formData.price_per_day}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-fuel_type">Fuel Type</Label>
+                  <Select value={formData.fuel_type} onValueChange={(value) => handleSelectChange("fuel_type", value)}>
+                    <SelectTrigger id="edit-fuel_type">
+                      <SelectValue placeholder="Select fuel type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="petrol">Petrol</SelectItem>
+                      <SelectItem value="diesel">Diesel</SelectItem>
+                      <SelectItem value="electric">Electric</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-location_id">Location</Label>
+                <Select
+                  value={formData.location_id}
+                  onValueChange={(value) => handleSelectChange("location_id", value)}
+                >
+                  <SelectTrigger id="edit-location_id">
+                    <SelectValue placeholder="Select location" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="car">Car</SelectItem>
-                    <SelectItem value="bike">Bike</SelectItem>
-                    <SelectItem value="scooter">Scooter</SelectItem>
-                    <SelectItem value="jeep">Jeep</SelectItem>
+                    {locations.map((location: any) => (
+                      <SelectItem key={location.id} value={location.id.toString()}>
+                        {location.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-status">Status</Label>
-                <Select value={formData.status} onValueChange={(value) => handleSelectChange("status", value)}>
-                  <SelectTrigger id="edit-status">
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="available">Available</SelectItem>
-                    <SelectItem value="rented">Rented</SelectItem>
-                    <SelectItem value="maintenance">Maintenance</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="edit-image_url">Image URL (Optional)</Label>
+                <Input id="edit-image_url" name="image_url" value={formData.image_url} onChange={handleInputChange} />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-brand">Brand</Label>
-              <Input id="edit-brand" name="brand" value={formData.brand} onChange={handleInputChange} required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-model">Model</Label>
-              <Input id="edit-model" name="model" value={formData.model} onChange={handleInputChange} required />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="edit-price_per_day">Price Per Day (NPR)</Label>
-                <Input
-                  id="edit-price_per_day"
-                  name="price_per_day"
-                  type="number"
-                  value={formData.price_per_day}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="edit-fuel_type">Fuel Type</Label>
-                <Select value={formData.fuel_type} onValueChange={(value) => handleSelectChange("fuel_type", value)}>
-                  <SelectTrigger id="edit-fuel_type">
-                    <SelectValue placeholder="Select fuel type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="petrol">Petrol</SelectItem>
-                    <SelectItem value="diesel">Diesel</SelectItem>
-                    <SelectItem value="electric">Electric</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-image_url">Image URL (Optional)</Label>
-              <Input id="edit-image_url" name="image_url" value={formData.image_url} onChange={handleInputChange} />
-            </div>
-          </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
               Cancel

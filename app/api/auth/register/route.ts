@@ -27,9 +27,9 @@ const transporter = {
 
 export async function POST(request: Request) {
   try {
-    const { email, password, fullName, phone } = await request.json()
+    const { email, password, full_name, phone } = await request.json()
 
-    if (!email || !password || !fullName) {
+    if (!email || !password || !full_name) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
     }
 
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
     const newUser = await prisma.users.create({
       data: {
         email,
-        full_name: fullName,
+        full_name: full_name,
         phone: phone || "",
         password_hash: passwordHash,
         role: "pending",
@@ -87,7 +87,7 @@ export async function POST(request: Request) {
 
     try {
       const subject = "Verify your email to sign in to HamroSadhan"
-      const html = `<p>Hi ${fullName},</p>
+      const html = `<p>Hi ${full_name},</p>
                     <p>Please verify your email by clicking the link below to sign in to HamroSadhan:</p>
                     <a href="${confirmationUrl}">${confirmationUrl}</a>`
       await sendEmail(email, subject, html)

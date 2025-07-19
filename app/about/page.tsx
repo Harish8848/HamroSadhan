@@ -1,3 +1,4 @@
+"use client"
 import React from "react";
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -5,10 +6,13 @@ import { Badge } from "@/components/ui/badge"
 import { Car, Bike, Shield, Clock, Users, CheckCircle } from "lucide-react"
 import Image from "next/image"
 import { Footer } from "@/components/footer"
+import { useRouter } from "next/navigation"
 
 
 
 export default function AboutPage() {
+const router = useRouter();
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Hero Section */}
@@ -194,14 +198,14 @@ export default function AboutPage() {
             Book your perfect vehicle today and explore Nepal like never before.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="outline" className="bg-black text-lg px-8 py-3  text-white border-white hover:bg-white hover:text-blue-600">
+            <Button size="lg" variant="outline" className="bg-black text-lg px-8 py-3  text-white border-white hover:bg-white hover:text-blue-600"  onClick={(e) => router.push("/vehicles?subject=Browse%20Vehicles")}>
               Browse Vehicles
             </Button>
             <Button
               size="lg"
               variant="outline"
               className=" bg-black text-lg px-8 py-3 text-white border-white hover:bg-white hover:text-blue-600"
-            >
+              onClick={(e) => router.push("/contact?subject=Location%20Suggestion")}>
               
               Contact Us
             </Button>

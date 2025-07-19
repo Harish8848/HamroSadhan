@@ -13,8 +13,11 @@ interface UserProfileProps {
 }
 
 export function UserProfile({ user }: UserProfileProps) {
-  const [fullName, setFullName] = useState(user.fullName)
+  const [full_name, setFullName] = useState(user.name)
   const [phone, setPhone] = useState(user.phone || "")
+  const [oldPassword, setOldPassword] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
 
@@ -23,20 +26,22 @@ export function UserProfile({ user }: UserProfileProps) {
     setIsLoading(true)
 
     try {
-      const response = await fetch("/api/users/update", {
+      const profileUpdatePayload: { userId: string; full_name?: string; phone?: string } = {
+        userId: user.id,
+        full_name: full_name ?? undefined,
+        phone,
+      }
+
+      const profileResponse = await fetch("/api/users/update", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          userId: user.id,
-          fullName,
-          phone,
-        }),
+        body: JSON.stringify(profileUpdatePayload),
       })
 
-      if (!response.ok) {
-        const errorData = await response.json()
+      if (!profileResponse.ok) {
+        const errorData = await profileResponse.json()
         throw new Error(errorData.error || "Failed to update profile")
       }
 
@@ -44,6 +49,43 @@ export function UserProfile({ user }: UserProfileProps) {
         title: "Profile updated",
         description: "Your profile has been updated successfully",
       })
+
+      // Handle password change if fields are filled
+      if (oldPassword || newPassword || confirmPassword) {
+        if (!oldPassword || !newPassword || !confirmPassword) {
+          throw new Error("All password fields must be filled to change password.")
+        }
+        if (newPassword !== confirmPassword) {
+          throw new Error("New password and confirm password do not match.")
+        }
+
+        const passwordChangeResponse = await fetch("/api/users/change-password", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: user.id,
+            oldPassword,
+            newPassword,
+          }),
+        })
+
+        if (!passwordChangeResponse.ok) {
+          const errorData = await passwordChangeResponse.json()
+          throw new Error(errorData.error || "Failed to change password")
+        }
+
+        toast({
+          title: "Password updated",
+          description: "Your password has been updated successfully",
+        })
+
+        // Clear password fields
+        setOldPassword("")
+        setNewPassword("")
+        setConfirmPassword("")
+      }
     } catch (error: any) {
       toast({
         title: "Update failed",
@@ -70,11 +112,23 @@ export function UserProfile({ user }: UserProfileProps) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="full_name">Full Name</Label>
-            <Input id="full_name" value={fullName ?? ""} onChange={(e) => setFullName(e.target.value)} required />
+            <Input id="full_name" value={full_name ?? ""} onChange={(e) => setFullName(e.target.value)} required />
           </div>
           <div className="space-y-2">
             <Label htmlFor="phone">Phone (Optional)</Label>
             <Input id="phone" placeholder="+977 98XXXXXXXX" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="oldPassword">Old Password</Label>
+            <Input id="oldPassword" type="password" value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="newPassword">New Password</Label>
+            <Input id="newPassword" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">Confirm New Password</Label>
+            <Input id="confirmPassword" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
           </div>
         </CardContent>
         <CardFooter>

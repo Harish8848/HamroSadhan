@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from "react"
 import type { User } from "@/types"
 
 type ExtendedUser = User & {
-  fullName?: string
+  full_name?: string
   phone?: string | null
 }
 import { useRouter } from "next/navigation"
@@ -14,7 +14,7 @@ type AuthContextType = {
   user: ExtendedUser | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<{ error: any }>
-  signUp: (email: string, password: string, fullName: string, phone?: string) => Promise<{ error: any }>
+  signUp: (email: string, password: string, full_name: string, phone?: string) => Promise<{ error: any }>
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<{ error: any }>
 }
@@ -37,7 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         setUser({
           ...session.user,
-          fullName: (session.user as any).fullName,
+          full_name: (session.user as any).full_name,
           phone: (session.user as any).phone,
         } as ExtendedUser)
         console.log("AuthContext user set:", session.user)
@@ -82,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         setUser({
           ...session.user,
-          fullName: (session.user as any).fullName,
+          full_name: (session.user as any).full_name,
           phone: (session.user as any).phone,
         } as ExtendedUser)
 
@@ -101,13 +101,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const signUp = async (email: string, password: string, fullName: string, phone?: string) => {
+  const signUp = async (email: string, password: string, full_name: string, phone?: string) => {
     try {
       email = email.trim().toLowerCase()
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, fullName, phone }),
+        body: JSON.stringify({ email, password, full_name, phone }),
       })
       const data = await res.json()
       if (!res.ok) {
@@ -116,7 +116,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem("authToken", data.token)
         setUser({
           ...data.user,
-          fullName: data.user.fullName,
+          full_name: data.user.full_name,
           phone: data.user.phone,
         } as ExtendedUser)
 

@@ -16,7 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { signupSchema } from "@/lib/schemas/signup-schema"
 import type { z } from "zod"
 
-type SignupFormData = z.infer<typeof signupSchema>
+type SignupFormData = z.infer<typeof signupSchema> & { full_name: string }
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -43,7 +43,7 @@ export default function RegisterPage() {
         body: JSON.stringify({
           email: data.email,
           password: data.password,
-          fullName: data.fullName,
+          full_name: data.full_name,
           phone: "", // optional, can be updated to include phone input value
         }),
       })
@@ -88,10 +88,10 @@ export default function RegisterPage() {
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
               <div className="space-y-1">
-                <Label htmlFor="fullName">Full Name</Label>
-                <Input id="fullName" placeholder="John Doe" {...register("fullName")} />
-                {errors.fullName && (
-                  <p className="text-sm text-red-600 mt-1">{errors.fullName.message}</p>
+                <Label htmlFor="full_name">Full Name</Label>
+                <Input id="full_name" placeholder="John Doe" {...register("full_name")} />
+                {errors.full_name && (
+                  <p className="text-sm text-red-600 mt-1">{errors.full_name.message}</p>
                 )}
               </div>
               <div className="space-y-1">
