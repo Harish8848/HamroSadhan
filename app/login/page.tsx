@@ -24,6 +24,14 @@ export default function LoginPage() {
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null)
 
   useEffect(() => {
+    const confirmed = searchParams.get("confirmed")
+    if (confirmed === "true") {
+      toast({
+        title: "Email Confirmed",
+        description: "Your email has been successfully confirmed. You can now log in.",
+        variant: "default",
+      })
+    }
     const error = searchParams.get("error")
     console.log("Login page error query param:", error)
     if (error) {

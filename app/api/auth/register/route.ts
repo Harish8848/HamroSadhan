@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     if (existingUser) {
       if (existingUser.role === "pending") {
         const token = jwt.sign({ userId: existingUser.id }, EMAIL_CONFIRMATION_SECRET, { expiresIn: "1d" })
-        const confirmationUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/confirm-email?token=${token}`
+        const confirmationUrl = `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/api/auth/confirm-email?token=${token}`
         try {
           const subject = "Verify your email to sign in to HamroSadhan"
           const html = `<p>Hi ${existingUser.full_name},</p>

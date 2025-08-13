@@ -39,6 +39,7 @@ export interface Booking {
   updated_at: string
   total_cost: number
   total_days?: number
+  transaction_uuid?: string | null
   status: string
   vehicle: Vehicle
   user: User

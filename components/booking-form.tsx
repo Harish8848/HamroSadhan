@@ -24,6 +24,7 @@ export function BookingForm({ vehicle }: BookingFormProps) {
   const [endDate, setEndDate] = useState<Date | undefined>(undefined)
   const [isLoading, setIsLoading] = useState(false)
   const [showPayment, setShowPayment] = useState(false)
+  const [bookingId, setBookingId] = useState<string | null>(null)
   const { user } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
@@ -109,12 +110,12 @@ export function BookingForm({ vehicle }: BookingFormProps) {
         throw new Error(errorData.error || "Failed to create booking")
       }
 
+      const createData = await createResponse.json()
+      setBookingId(createData.id)
+
       // Instead of redirecting, show payment button
       setShowPayment(true)
-      toast({
-        title: "Booking successful",
-        description: "Please proceed with payment",
-      })
+      // Removed premature toast here
     } catch (error: any) {
       toast({
         title: "Booking failed",
@@ -126,12 +127,13 @@ export function BookingForm({ vehicle }: BookingFormProps) {
     }
   }
 
-  if (showPayment) {
+  if (showPayment && bookingId) {
     return (
       <PaymentButton
         amount={vehicle.price_per_day * totalDays}
         productId={vehicle.id}
         productName={`${vehicle.type} booking`}
+        bookingId={bookingId}
       />
     )
   }

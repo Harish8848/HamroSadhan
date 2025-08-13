@@ -270,9 +270,9 @@ export function AdminVehicles({ vehicles, setVehicles }: AdminVehiclesProps) {
         <h2 className="text-xl font-bold">Manage Vehicles</h2>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-red-600 hover:bg-red-700">
+            <Button className=" bg-red-500  hover:bg-red-500 ">
               <Plus className="mr-2 h-4 w-4" />
-              Add Vehicle
+              Add vehicles
             </Button>
           </DialogTrigger>
           <DialogContent>

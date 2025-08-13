@@ -1,7 +1,9 @@
 // app/api/payment/success/route.ts
+
+
+import prisma from "@/lib/prisma";
 import { generateEsewaSignature } from '@/lib/verifySignature';
 import { NextRequest, NextResponse } from 'next/server';
-
 
 export async function POST(req: NextRequest) {
   try {
@@ -49,7 +51,38 @@ export async function POST(req: NextRequest) {
     if (validSignature !== receivedSignature.toString()) {
       throw new Error('Invalid signature');
     }
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/success`);
+
+    // Update booking status and transaction UUID
+    // Prisma does not recognize transaction_uuid in where clause or update data
+    // Use raw query to update booking status and transaction_uuid
+
+    const result = await prisma.$executeRawUnsafe(`
+      UPDATE bookings
+      SET status = 'confirmed', transaction_uuid = $1
+      WHERE transaction_uuid IS NULL
+      LIMIT 1
+    `, transactionUuid.toString());
+
+    if (result === 0) {
+      console.error('No booking updated for transaction UUID:', transactionUuid.toString());
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/failure`);
+    }
+
+    // Prisma does not recognize transaction_uuid in where clause
+    // Use raw query to get booking ID by transaction_uuid
+
+    const bookings = await prisma.$queryRawUnsafe<any[]>(`
+      SELECT id FROM bookings WHERE transaction_uuid = $1 LIMIT 1
+    `, transactionUuid.toString());
+
+    if (!bookings || bookings.length === 0) {
+      console.error('Booking not found after update for transaction UUID:', transactionUuid.toString());
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/failure`);
+    }
+
+    const bookingId = bookings[0].id;
+
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/success?bookingId=${bookingId}`);
   } catch (error) {
     console.error('Payment verification error:', error);
     return NextResponse.redirect(`${process.env.NEXT_PUBLIC_URL}/failure`);

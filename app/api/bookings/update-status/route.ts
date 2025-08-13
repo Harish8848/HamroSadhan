@@ -1,46 +1,53 @@
-import { NextResponse, NextRequest } from "next/server"
-import { getToken } from "next-auth/jwt"
-import prisma from "@/lib/prisma"
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import prisma from "@/lib/prisma"; // Fixed import for prisma
 
-export async function POST(request: NextRequest) {
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
+export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
 
-  if (!token || !token.sub) {
-    console.log("No token or user found")
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!session || !session.user) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const userId = token.sub
-  const userRole = (token as any).role
-
-  console.log("User ID:", userId)
-  console.log("User Role:", userRole)
-
   try {
-    const body = await request.json()
-    const { bookingId, status } = body
+    const { bookingId, status } = await req.json();
 
     if (!bookingId || !status) {
-      return NextResponse.json({ error: "Missing bookingId or status" }, { status: 400 })
+      return NextResponse.json(
+        { error: "Missing bookingId or status" },
+        { status: 400 }
+      );
     }
 
-    // Optionally, you can add ownership check here if needed
+    // Find the booking by bookingId
+    const booking = await prisma.bookings.findUnique({
+      where: { id: Number(bookingId) },
+    });
 
-    // Allow update if user is admin
-    if (userRole !== "admin") {
-      console.log("Unauthorized: user role is not admin")
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    if (!booking) {
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
     }
 
-    const bookingIdInt = parseInt(bookingId, 10)
+    if (booking.user_id !== session.user.id && (session.user as any).role !== "admin") {
+      return NextResponse.json(
+        { error: "You are not authorized to update this booking" },
+        { status: 403 }
+      );
+    }
+
+    // Now, update the booking
     const updatedBooking = await prisma.bookings.update({
-      where: { id: bookingIdInt },
-      data: { status },
-    })
+      where: { id: booking.id },
+      data: { status: status },
+    });
 
-    return NextResponse.json({ booking: updatedBooking }, { status: 200 })
+    return NextResponse.json(updatedBooking, { status: 200 });
   } catch (error) {
-    console.error("Error updating booking status:", error)
-    return NextResponse.json({ error: "Failed to update booking status" }, { status: 500 })
+    console.error("Error updating booking status:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

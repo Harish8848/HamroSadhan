@@ -11,6 +11,10 @@ import { Footer } from "@/components/footer"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
+import { formatCurrency } from "@/lib/utils"
+
+
+
 
 
 
@@ -61,7 +65,7 @@ export default function Home() {
           type: v.type,
           name: v.name,
           image: v.image_url || "/placeholder.svg",
-          price: `Rs. ${v.price_per_day?.toLocaleString() ?? "N/A"}`,
+          price: `NRS. ${v.price_per_day?.toLocaleString() ?? "N/A"}`,
           features: [], // API does not provide features, so empty array for now
         }))
         setVehicles(mapped)

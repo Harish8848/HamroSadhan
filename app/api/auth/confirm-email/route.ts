@@ -46,7 +46,8 @@ export async function GET(request: Request) {
         return new NextResponse(JSON.stringify({ error: "Internal Server Error" }), { status: 500, headers: { "Content-Type": "application/json" } })
       }
 
-    return new NextResponse(JSON.stringify({ message: "Email confirmed successfully" }), { status: 200, headers: { "Content-Type": "application/json" } })
+    const redirectUrl = new URL("/login?confirmed=true", request.url);
+    return NextResponse.redirect(redirectUrl);
   } catch (error: any) {
     console.error("Confirm Email: Internal server error", error);
     return new NextResponse(JSON.stringify({ error: error.message || "Internal Server Error" }), { status: 500, headers: { "Content-Type": "application/json" } })

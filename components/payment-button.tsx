@@ -8,9 +8,10 @@ interface PaymentButtonProps {
   amount: number;
   productId: string;
   productName: string;
+  bookingId?: string;
 }
 
-const PaymentButton: React.FC<PaymentButtonProps> = ({ amount, productId, productName }) => {
+const PaymentButton: React.FC<PaymentButtonProps> = ({ amount, productId, productName, bookingId }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,8 +20,16 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({ amount, productId, produc
     setError(null);
 
     try {
-      const successUrl = window.location.origin + '/success';
+      if (bookingId) {
+        localStorage.setItem('bookingId', bookingId);
+      }
+
+      let successUrl = window.location.origin + '/success';
       const failureUrl = window.location.origin + '/failure';
+
+      if (bookingId) {
+        successUrl += `?bookingId=${bookingId}`;
+      }
 
       const useMockApi = process.env.NEXT_PUBLIC_ESEWA_USE_MOCK_API === 'true';
       const apiEndpoint = useMockApi ? '/api/payments/mock-payment' : '/api/payments/initiate';

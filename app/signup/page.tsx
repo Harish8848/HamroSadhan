@@ -15,7 +15,13 @@ import { useToast } from "@/components/ui/use-toast"
 import { Car, Eye, EyeOff } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 
-type SignupFormData = React.ComponentProps<typeof signupSchema> extends infer T ? T : any
+type SignupFormData = {
+  fullName: string
+  email: string
+  phone?: string
+  password: string
+  confirmPassword: string
+}
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -38,12 +44,14 @@ export default function SignupPage() {
   })
 
   const onSubmit = async (data: SignupFormData) => {
+    console.log("Signup form submitted with data:", data)
     setIsLoading(true)
     clearErrors()
     setSubmittedEmail(data.email)
 
     try {
       const { error } = await signUp(data.email, data.password, data.fullName, data.phone)
+      console.log("signUp response error:", error)
       if (error) {
         if (error.message.toLowerCase().includes("email")) {
           setError("email", { message: error.message })
@@ -58,8 +66,15 @@ export default function SignupPage() {
         return
       }
 
+      toast({
+        variant: "default",
+        title: "Signup successful",
+        description: "Please check your email to confirm your account.",
+      })
+
       setSignupSuccess(true)
     } catch (error: any) {
+      console.error("Signup error caught:", error)
       toast({
         variant: "destructive",
         title: "Signup failed",

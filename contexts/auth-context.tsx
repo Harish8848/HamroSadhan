@@ -113,25 +113,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!res.ok) {
         return { error: data.error || "Signup failed" }
       }
-      localStorage.setItem("authToken", data.token)
-        setUser({
-          ...data.user,
-          full_name: data.user.full_name,
-          phone: data.user.phone,
-        } as ExtendedUser)
 
-      // Redirect based on role
-      // Removed redirect logic to allow page to handle redirect after showing toast
-      // if (data.user && data.user.role) {
-      //   const role = data.user.role.trim().toLowerCase()
-      //   if (role === "user") {
-      //     router.push("/dashboard")
-      //   } else if (role === "admin") {
-      //     router.push("/admin")
-      //   } else {
-      //     alert("Email not verified yet")
-      //   }
-      // }
+      // Signup API does not return token or user, so do not set localStorage or user state here
+      // Instead, rely on signup page to show confirmation message
 
       return { error: null }
     } catch (error: any) {
