@@ -20,7 +20,7 @@ const router = useRouter();
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <Badge variant="secondary" className="mb-4 text-sm font-medium">
-              Nepal's Trusted Rental Platform
+              Nepal&apos;s Trusted Rental Platform
             </Badge>
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
               About <span className="text-blue-600">HamroSadhan</span>
@@ -41,7 +41,7 @@ const router = useRouter();
               <h2 className=" text-3xl font-bold text-gray-900 mb-6">Our Mission</h2>
               <p className="text-lg text-gray-600 mb-8 leading-relaxed">
                 To revolutionize transportation in Nepal by providing accessible, reliable, and affordable vehicle
-                rental services. We believe everyone should have the freedom to explore Nepal's stunning beauty at their
+                rental services. We believe everyone should have the freedom to explore Nepal&apos;s stunning beauty at their
                 own pace.By connecting travelers with local vehicle owners, we aim to foster economic growth and support sustainable tourism practices across the country. We prioritize the safety and reliability of our services, ensuring all vehicles are well-maintained and comprehensive support is always available. Furthermore, we are dedicated to promoting eco-friendly travel by expanding our fleet with sustainable options and encouraging responsible travel. We strive to build a seamless and connected transportation network that makes exploring every corner of Nepal easier for everyone, continuously seeking innovative solutions and prioritizing customer satisfaction to offer the best possible rental experience.
               </p>
               <div className="space-y-4">
@@ -151,7 +151,7 @@ const router = useRouter();
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Choose HamroSadhan?</h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              We're committed to providing the best rental experience in Nepal with our customer-first approach and
+              We&apos;re committed to providing the best rental experience in Nepal with our customer-first approach and
               reliable service.
             </p>
           </div>

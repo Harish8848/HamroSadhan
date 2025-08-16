@@ -136,7 +136,7 @@ export default function LocationsPage() {
             <h1 className="text-4xl font-bold text-gray-900">Our Locations</h1>
           </div>
           <p className="text-lg text-gray-600 mb-6 max-w-2xl">
-            Find HamroSadhan rental services across Nepal. We're strategically located in major cities and tourist
+            Find HamroSadhan rental services across Nepal. We&apos;re strategically located in major cities and tourist
             destinations to serve you better.
           </p>
 
@@ -303,7 +303,7 @@ export default function LocationsPage() {
         {/* Call to Action */}
         <Card className="mt-12 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
           <CardContent className="text-center py-8">
-            <h2 className="text-2xl font-bold mb-4">Can't Find a Location Near You?</h2>
+            <h2 className="text-2xl font-bold mb-4">Can&apos;t Find a Location Near You?</h2>
             <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
               We&apos;re expanding across Nepal! Contact us to suggest a new location or inquire about vehicle delivery
               services in your area.

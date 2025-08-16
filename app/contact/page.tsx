@@ -25,7 +25,7 @@ export default async function ContactPage() {
             Contact <span className="text-blue-600">HamroSadhan</span>
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Have questions about our rental services? Need help planning your trip? We're here to assist you 24/7. Reach
+            Have questions about our rental services? Need help planning your trip? We&apos;re here to assist you 24/7. Reach
             out to us anytime!
           </p>
         </div>
@@ -42,7 +42,7 @@ export default async function ContactPage() {
                   <MessageCircle className="h-6 w-6 text-blue-600" />
                   Send us a Message
                 </CardTitle>
-                <p className="text-gray-600">Fill out the form below and we'll get back to you within 24 hours.</p>
+                <p className="text-gray-600">Fill out the form below and we&apos;ll get back to you within 24 hours.</p>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-4">
@@ -185,7 +185,7 @@ export default async function ContactPage() {
             <Card className="p-6">
               <h3 className="font-semibold text-gray-900 mb-2">What documents do I need to rent a vehicle?</h3>
               <p className="text-gray-600">
-                You'll need a valid driving license, citizenship certificate or passport, and a security deposit.
+                You&apos;ll need a valid driving license, citizenship certificate or passport, and a security deposit.
                 International visitors need an International Driving Permit.
               </p>
             </Card>
@@ -193,7 +193,7 @@ export default async function ContactPage() {
             <Card className="p-6">
               <h3 className="font-semibold text-gray-900 mb-2">Do you provide fuel?</h3>
               <p className="text-gray-600">
-                Vehicles are provided with a full tank. You're responsible for fuel during your rental period and should
+                Vehicles are provided with a full tank. You&apos;re responsible for fuel during your rental period and should
                 return the vehicle with the same fuel level.
               </p>
             </Card>

@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -9,13 +8,13 @@ import { CheckCircle } from "lucide-react";
 
 export default function SuccessPage() {
   const searchParams = useSearchParams();
-  let bookingId = searchParams.get("bookingId");
   const { toast } = useToast();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("Confirming your booking...");
 
   useEffect(() => {
+    let bookingId = searchParams.get("bookingId");
     async function updateBookingStatus() {
       if (!bookingId) {
         // Try to get bookingId from localStorage
@@ -81,7 +80,7 @@ export default function SuccessPage() {
     }
 
     updateBookingStatus();
-  }, [bookingId, toast, router]);
+  }, [searchParams, toast, router]);
 
   if (loading) {
     return (
