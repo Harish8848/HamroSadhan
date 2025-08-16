@@ -165,7 +165,7 @@ export default function Home() {
         {/* Background Video */}
         <div className="absolute inset-0 z-0">
           <video autoPlay muted loop playsInline className="w-full h-full object-cover brightness-150">
-            <source src="/HamroSadhanBgVideo.mov" type="video/mp4" />
+            <source src="/HamroSadhanBgVideo.mp4" type="video/mp4" />
             {/* Fallback background */}
             <div className="w-full h-full bg-gradient-to-r from-blue-900 via-purple-900 to-blue-900"></div>
           </video>
