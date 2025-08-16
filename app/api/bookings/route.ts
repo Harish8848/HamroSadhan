@@ -104,7 +104,7 @@ export async function POST(request: Request) {
         start_date: new Date(start_date),
         end_date: new Date(end_date),
         total_days,
-        total_cost: new Prisma.Decimal(total_cost),
+        total_cost: total_cost,
         status: "pending",
       },
     })
