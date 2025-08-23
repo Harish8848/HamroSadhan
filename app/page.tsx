@@ -5,13 +5,12 @@ import { useSearchParams, useRouter } from "next/navigation"
 import { useToast } from "@/components/ui/use-toast"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Car, Bike, MapPin, Clock, Shield, Star, ChevronLeft, ChevronRight, Menu, X  } from "lucide-react"
+import { Car, Bike, Star, ChevronLeft, ChevronRight  } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { Footer } from "@/components/footer"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
-import { formatCurrency } from "@/lib/utils"
 
 
 
